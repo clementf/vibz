@@ -12,23 +12,23 @@ import java.util.ArrayList;
 
 /**
  * Created by clement on 06/10/2015.
- * Adapter made to display a song list in a Listview
+ * Adapter made to display a item list in a Listview (Can be an artist, album or genre)
  */
-public class SongAdapter extends BaseAdapter {
+public class ItemAdapter extends BaseAdapter {
 
     //Declarations
 
-    private ArrayList<Song> songs = new ArrayList<>();
+    private ArrayList<String> items = new ArrayList<>();
     private LayoutInflater songInf;
 
-    public SongAdapter(Context c, ArrayList<Song> theSongs) {
-        this.songs = theSongs;
+    public ItemAdapter(Context c, ArrayList<String> theItems) {
+        this.items = theItems;
         this.songInf = LayoutInflater.from(c);
     }
 
     @Override
     public int getCount() {
-        return songs.size();
+        return items.size();
     }
 
     @Override
@@ -42,7 +42,7 @@ public class SongAdapter extends BaseAdapter {
     }
 
     /**
-     * Add the content for each row of the list (Song and artist's names)
+     * Add the content for each row of the list
      *
      * @param position
      * @param convertView
@@ -52,19 +52,14 @@ public class SongAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         //map to song layout
-        LinearLayout songLay = (LinearLayout) songInf.inflate
-                (R.layout.song, parent, false);
+        LinearLayout itemLay = (LinearLayout) songInf.inflate
+                (R.layout.artist_album_genre, parent, false);
         //get title and artist views
-        TextView songView = (TextView) songLay.findViewById(R.id.song_title);
-        TextView artistView = (TextView) songLay.findViewById(R.id.song_artist);
-        //get song using position
-        Song currSong = songs.get(position);
-        //get title and artist strings
-        songView.setText(currSong.getTitle());
-        artistView.setText(currSong.getArtist());
+        TextView itemView = (TextView) itemLay.findViewById(R.id.item_title);
+        //get item
+        itemView.setText(items.get(position).toString());
         //set position as tag
-        songLay.setTag(position);
-        return songLay;
+        itemLay.setTag(position);
+        return itemLay;
     }
-
 }

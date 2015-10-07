@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 /**
  * Created by clement on 06/10/2015.
+ * Service implementing the music player itself
  */
 public class MusicService extends Service implements
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
@@ -31,7 +32,7 @@ public class MusicService extends Service implements
     public void onCreate() {
         //create the service
         super.onCreate();
-        //initialize position
+        //initialize position (Index of the playlist)
         this.songPosition = 0;
         //create player
         this.player = new MediaPlayer();
@@ -42,18 +43,27 @@ public class MusicService extends Service implements
 
     public void initMusicPlayer() {
         //set player properties
+        //Can run when the screen is locked
         this.player.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
+        //We stream music
         this.player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
         this.player.setOnPreparedListener(this);
         this.player.setOnCompletionListener(this);
         this.player.setOnErrorListener(this);
 
     }
 
+    /**
+     * Connect the playlist to the player's queue
+     */
     public void setList(ArrayList<Song> theSongs) {
         this.songs = theSongs;
     }
 
+    /**
+     * Play the current song based on the position (index) of the playlist
+     */
     public void playSong() {
         player.reset();
         //get song
@@ -67,9 +77,16 @@ public class MusicService extends Service implements
         } catch (Exception e) {
             Log.e("MUSIC SERVICE", "Error setting data source", e);
         }
+
+        //Prepare (Load) the song
         player.prepareAsync();
     }
 
+    /**
+     * Set the index of the playlist (Usefull for "nextSong" functionnality)
+     *
+     * @param songIndex
+     */
     public void setSong(int songIndex) {
         this.songPosition = songIndex;
     }

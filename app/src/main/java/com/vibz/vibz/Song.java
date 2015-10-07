@@ -2,6 +2,7 @@ package com.vibz.vibz;
 
 /**
  * Created by clement on 06/10/2015.
+ * Represent a song
  */
 public class Song {
     private long id;
