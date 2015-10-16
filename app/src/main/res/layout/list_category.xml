@@ -1,7 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:onClick="songPicked"
     android:orientation="vertical"
     android:padding="5dp">
 
@@ -15,7 +14,9 @@
         android:textAllCaps="true"
         android:textColor="#FF1C7CCE"
         android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:clickable="true"
+        />
 
     <TextView
         android:id="@+id/choose_by_album"
@@ -27,7 +28,9 @@
         android:textAllCaps="true"
         android:textColor="#FF1C7CCE"
         android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:clickable="true"
+        />
 
     <TextView
         android:id="@+id/all_song"
@@ -39,6 +42,8 @@
         android:textAllCaps="true"
         android:textColor="#FF1C7CCE"
         android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:clickable="true"
+        />
 
 </LinearLayout>

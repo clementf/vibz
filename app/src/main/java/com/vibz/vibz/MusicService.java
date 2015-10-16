@@ -37,7 +37,6 @@ public class MusicService extends Service implements
         //create player
         this.player = new MediaPlayer();
         initMusicPlayer();
-
     }
 
 

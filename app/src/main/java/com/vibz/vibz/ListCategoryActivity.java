@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.vibz.vibz.MusicService.MusicBinder;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
  * Created by clement on 06/10/2015.
  * We simply list the categories (Musics, artists, albums) and redirect the user to the corresponding activity
  */
-public class ListCategoryActivity extends ActionBarActivity {
+public class ListCategoryActivity extends AppCompatActivity {
 
 
     private Intent playIntent;
@@ -48,7 +49,6 @@ public class ListCategoryActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.list_category);
-
     }
 
     @Override
@@ -62,7 +62,9 @@ public class ListCategoryActivity extends ActionBarActivity {
     }
 
     public void songPicked(View view) {
+        android.util.Log.d("MyApp", "I've selected a music ");
         this.musicSrv.setSong(Integer.parseInt(view.getTag().toString()));
+        android.util.Log.d("MyApp", "I've set a song ");
         this.musicSrv.playSong();
     }
 
@@ -77,7 +79,6 @@ public class ListCategoryActivity extends ActionBarActivity {
         Intent intent = new Intent(this, ChooseCategoryActivity.class);
         intent.putExtra("type", "artist");
         startActivity(intent);
-
     }
 
     public void chooseByAlbum(View view) {
