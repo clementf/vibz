@@ -17,12 +17,13 @@ public class MusicAccess {
      * Queries Music library and returns a cursor with all songs.
      */
     public static Cursor getAllSongs(Context context,
+                                     String selection,
                                      String[] projection,
                                      String sortOrder) {
 
         ContentResolver contentResolver = context.getContentResolver();
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
+        selection += " AND " + MediaStore.Audio.Media.IS_MUSIC + "!= 0";
 
         return contentResolver.query(uri, null, selection, null, sortOrder);
 
@@ -31,7 +32,7 @@ public class MusicAccess {
     /**
      * Queries Music library and returns a cursor with all unique artists
      */
-    public static Cursor getAllUniqueArtists(Context context) {
+    public static Cursor getAllUniqueArtists(Context context, String selection) {
         ContentResolver contentResolver = context.getContentResolver();
         String[] projection = {MediaStore.Audio.Artists._ID,
                 MediaStore.Audio.Artists.ARTIST,
@@ -48,15 +49,14 @@ public class MusicAccess {
     /**
      * Queries Music library and returns a cursor with all unique albums,
      */
-    public static Cursor getAllUniqueAlbums(Context context) {
+    public static Cursor getAllUniqueAlbums(Context context, String selection) {
         ContentResolver contentResolver = context.getContentResolver();
         String[] projection = {MediaStore.Audio.Albums._ID,
                 MediaStore.Audio.Albums.ALBUM,
                 MediaStore.Audio.Albums.NUMBER_OF_SONGS};
-
         return contentResolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
                 projection,
-                null,
+                selection,
                 null,
                 MediaStore.Audio.Albums.ALBUM + " ASC");
 

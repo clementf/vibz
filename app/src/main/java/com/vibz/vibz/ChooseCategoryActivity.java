@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -43,6 +45,16 @@ public class ChooseCategoryActivity extends AppCompatActivity {
             musicBound = false;
         }
     };
+    //Type of list to display : song, artist or album
+    private String type = "";
+    //Selection to make when querying the music library
+    private String selection = "";
+
+
+    //Getters and setters
+    public String getType() {
+        return this.type;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,24 +62,25 @@ public class ChooseCategoryActivity extends AppCompatActivity {
         setContentView(R.layout.item_list);
         itemView = (ListView) findViewById(R.id.song_list);
         Intent intent = getIntent();
-        String type = intent.getStringExtra("type");
+        this.type = intent.getStringExtra("type");
+        this.selection = intent.getStringExtra("selection");
 
         //If the user selected the list of all songs
         if (type.equals("song")) {
-            getAllSongs();
+            getAllSongs(this.selection);
             SongAdapter songAdt = new SongAdapter(this, listSongs);
             itemView.setAdapter(songAdt);
         }
         //If the user selected the list of all albums
         else if (type.equals("album")) {
-            getAllAlbums();
-            ItemAdapter itemAdt = new ItemAdapter(this, listItems);
+            getAllAlbums(this.selection);
+            ItemAdapter itemAdt = new ItemAdapter(this, listItems, this.type);
             itemView.setAdapter(itemAdt);
         }
         //If the user selected the list of all artists
         else if (type.equals("artist")) {
-            getAllArtists();
-            ItemAdapter itemAdt = new ItemAdapter(this, listItems);
+            getAllArtists(this.selection);
+            ItemAdapter itemAdt = new ItemAdapter(this, listItems, this.type);
             itemView.setAdapter(itemAdt);
         }
 
@@ -86,8 +99,8 @@ public class ChooseCategoryActivity extends AppCompatActivity {
     /**
      * Get the song list from the device
      */
-    public void getAllSongs() {
-        Cursor musicCursor = MusicAccess.getAllSongs(this, null, null);
+    public void getAllSongs(String selection) {
+        Cursor musicCursor = MusicAccess.getAllSongs(this, selection, null, null);
         //Once we have the music, we iterate over it
         if (musicCursor != null && musicCursor.moveToFirst()) {
             //get columns
@@ -113,9 +126,9 @@ public class ChooseCategoryActivity extends AppCompatActivity {
     /**
      * Get the album list from the device
      */
-    public void getAllAlbums() {
+    public void getAllAlbums(String selection) {
 
-        Cursor musicCursor = MusicAccess.getAllUniqueAlbums(this);
+        Cursor musicCursor = MusicAccess.getAllUniqueAlbums(this, selection);
         //Once we have the music, we iterate over it
         if (musicCursor != null && musicCursor.moveToFirst()) {
             //get columns
@@ -133,8 +146,8 @@ public class ChooseCategoryActivity extends AppCompatActivity {
     /**
      * Get the artist list from the device
      */
-    public void getAllArtists() {
-        Cursor musicCursor = MusicAccess.getAllUniqueArtists(this);
+    public void getAllArtists(String selection) {
+        Cursor musicCursor = MusicAccess.getAllUniqueArtists(this, selection);
         //Once we have the music, we iterate over it
         if (musicCursor != null && musicCursor.moveToFirst()) {
             //get columns
@@ -147,5 +160,32 @@ public class ChooseCategoryActivity extends AppCompatActivity {
             while (musicCursor.moveToNext());
         }
     }
+
+    /**
+     * Add a menu in the navigation bar to go back to the main activity
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.mainmenu, menu);
+        return true;
+    }
+
+    /**
+     * Selection of an item in the menu
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_home:
+                Intent intent = new Intent(this, MenuActivity.class);
+                startActivity(intent);
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
+
 
 }
