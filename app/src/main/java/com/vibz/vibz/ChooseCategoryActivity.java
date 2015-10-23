@@ -23,6 +23,16 @@ public class ChooseCategoryActivity extends AppCompatActivity {
     private ListView itemView;
     private ArrayList listSongs = new ArrayList<Song>();
     private ArrayList listItems = new ArrayList<String>();
+    //Type of list to display : song, artist or album
+    private String type = "";
+    //Selection to make when querying the music library
+    private String selection = "";
+
+
+    //Getters and setters
+    public String getType() {
+        return this.type;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,27 +40,28 @@ public class ChooseCategoryActivity extends AppCompatActivity {
         setContentView(R.layout.item_list);
         itemView = (ListView) findViewById(R.id.song_list);
         Intent intent = getIntent();
-        String type = intent.getStringExtra("type");
+        this.type = intent.getStringExtra("type");
+        this.selection = intent.getStringExtra("selection");
 
         //If the user selected the list of all songs
         if (type.equals("song")) {
-            getAllSongs();
+            getAllSongs(this.selection);
             //Add the songs to the adapter
             SongAdapter songAdt = new SongAdapter(this, listSongs);
             itemView.setAdapter(songAdt);
         }
         //If the user selected the list of all albums
         else if (type.equals("album")) {
-            getAllAlbums();
+            getAllAlbums(this.selection);
             //Add the albums to the adapter
-            ItemAdapter itemAdt = new ItemAdapter(this, listItems);
+            ItemAdapter itemAdt = new ItemAdapter(this, listItems, this.type);
             itemView.setAdapter(itemAdt);
         }
         //If the user selected the list of all artists
         else if (type.equals("artist")) {
-            getAllArtists();
+            getAllArtists(this.selection);
             //Add the artists to the adapter
-            ItemAdapter itemAdt = new ItemAdapter(this, listItems);
+            ItemAdapter itemAdt = new ItemAdapter(this, listItems, this.type);
             itemView.setAdapter(itemAdt);
         }
 
@@ -69,8 +80,8 @@ public class ChooseCategoryActivity extends AppCompatActivity {
     /**
      * Get the song list from the device
      */
-    public void getAllSongs() {
-        Cursor musicCursor = MusicAccess.getAllSongs(this, null, null);
+    public void getAllSongs(String selection) {
+        Cursor musicCursor = MusicAccess.getAllSongs(this, selection, null, null);
         //Once we have the music, we iterate over it
         if (musicCursor != null && musicCursor.moveToFirst()) {
             //get columns
@@ -96,9 +107,9 @@ public class ChooseCategoryActivity extends AppCompatActivity {
     /**
      * Get the album list from the device
      */
-    public void getAllAlbums() {
+    public void getAllAlbums(String selection) {
 
-        Cursor musicCursor = MusicAccess.getAllUniqueAlbums(this);
+        Cursor musicCursor = MusicAccess.getAllUniqueAlbums(this, selection);
         //Once we have the music, we iterate over it
         if (musicCursor != null && musicCursor.moveToFirst()) {
             //get columns
@@ -116,8 +127,8 @@ public class ChooseCategoryActivity extends AppCompatActivity {
     /**
      * Get the artist list from the device
      */
-    public void getAllArtists() {
-        Cursor musicCursor = MusicAccess.getAllUniqueArtists(this);
+    public void getAllArtists(String selection) {
+        Cursor musicCursor = MusicAccess.getAllUniqueArtists(this, selection);
         //Once we have the music, we iterate over it
         if (musicCursor != null && musicCursor.moveToFirst()) {
             //get columns
