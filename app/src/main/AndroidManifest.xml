@@ -10,8 +10,9 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
         <activity
-            android:name=".ListCategoryActivity"
+            android:name=".MenuActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
@@ -26,7 +27,10 @@
 
         <activity
             android:name=".ChooseCategoryActivity"
-            android:label="@string/title_activity_choose_category"></activity>
+            android:label="Vibz - Choose your song"></activity>
+
+        <activity android:name=".ListCategoryActivity"
+            android:label="Vibz - Choose your song"></activity>
     </application>
 
 </manifest>
