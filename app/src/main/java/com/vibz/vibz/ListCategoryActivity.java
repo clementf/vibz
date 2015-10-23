@@ -21,7 +21,6 @@ import java.util.ArrayList;
  * We simply list the categories (Musics, artists, albums) and redirect the user to the corresponding activity
  */
 public class ListCategoryActivity extends AppCompatActivity {
-    private MusicService musicSrv;
     private ArrayList<Song> playList;
     private boolean musicBound = false;
 
@@ -36,10 +35,6 @@ public class ListCategoryActivity extends AppCompatActivity {
         super.onStart();
     }
 
-    public void songPicked(View view) {
-        this.musicSrv.setSong(Integer.parseInt(view.getTag().toString()));
-        this.musicSrv.playSong();
-    }
 
     public void chooseBySong(View view) {
         Intent intent = new Intent(this, ChooseCategoryActivity.class);
@@ -60,10 +55,6 @@ public class ListCategoryActivity extends AppCompatActivity {
         startActivity(intent);
 
     }
-
-
-
-
 
     @Override
     protected void onDestroy() {

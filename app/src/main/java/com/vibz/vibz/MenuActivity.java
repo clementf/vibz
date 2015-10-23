@@ -18,16 +18,16 @@ import java.util.ArrayList;
 public class MenuActivity  extends AppCompatActivity {
     private Intent playIntent;
     private ListView itemView;
-    private ArrayList listSongs = new ArrayList<Song>();
-    private MusicService musicSrv;
+    public static ArrayList PlaylistSongs = new ArrayList<Song>();
     private boolean musicBound = false;
+    private MusicService musicSrv;
 
     private ServiceConnection musicConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
             musicSrv = binder.getService();
-            musicSrv.setList(listSongs);
+            musicSrv.setList(PlaylistSongs);
             musicBound = true;
         }
 
@@ -42,18 +42,29 @@ public class MenuActivity  extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.menu);
         itemView = (ListView) findViewById(R.id.playlist);
-        SongAdapter songAdt = new SongAdapter(this, listSongs);
+        SongAdapter songAdt = new SongAdapter(this, PlaylistSongs);
         itemView.setAdapter(songAdt);
-        }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
         if (playIntent == null) {
             playIntent = new Intent(this, MusicService.class);
             bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
             startService(playIntent);
         }
+        }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        itemView = (ListView) findViewById(R.id.playlist);
+        SongAdapter songAdt = new SongAdapter(this,PlaylistSongs);
+        itemView.setAdapter(songAdt);
+    }
+
+    public static void setPlaylistSongs(Song song){
+        PlaylistSongs.add(song);
+    }
+
+    public static ArrayList getPlaylistSongs(){
+        return PlaylistSongs;
     }
 
     public void CheckConnection(View view) {

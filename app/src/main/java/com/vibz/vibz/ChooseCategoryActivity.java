@@ -1,10 +1,14 @@
 package com.vibz.vibz;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -19,10 +23,26 @@ import java.util.Comparator;
 public class ChooseCategoryActivity extends AppCompatActivity {
 
     //Declarations
-
+    private MusicService musicSrv;
     private ListView itemView;
     private ArrayList listSongs = new ArrayList<Song>();
     private ArrayList listItems = new ArrayList<String>();
+    private boolean musicBound = false;
+
+    private ServiceConnection musicConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
+            musicSrv = binder.getService();
+            musicSrv.setList(listSongs);
+            musicBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            musicBound = false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,21 +55,18 @@ public class ChooseCategoryActivity extends AppCompatActivity {
         //If the user selected the list of all songs
         if (type.equals("song")) {
             getAllSongs();
-            //Add the songs to the adapter
             SongAdapter songAdt = new SongAdapter(this, listSongs);
             itemView.setAdapter(songAdt);
         }
         //If the user selected the list of all albums
         else if (type.equals("album")) {
             getAllAlbums();
-            //Add the albums to the adapter
             ItemAdapter itemAdt = new ItemAdapter(this, listItems);
             itemView.setAdapter(itemAdt);
         }
         //If the user selected the list of all artists
         else if (type.equals("artist")) {
             getAllArtists();
-            //Add the artists to the adapter
             ItemAdapter itemAdt = new ItemAdapter(this, listItems);
             itemView.setAdapter(itemAdt);
         }

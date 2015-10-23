@@ -87,7 +87,9 @@ public class MusicService extends Service implements
      * @param songIndex
      */
     public void setSong(int songIndex) {
+        android.util.Log.d("The_best", "Hey hey hey");
         this.songPosition = songIndex;
+        android.util.Log.d("The_best","All good here");
     }
 
     @Override
