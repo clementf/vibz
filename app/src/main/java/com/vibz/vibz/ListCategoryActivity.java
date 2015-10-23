@@ -21,29 +21,9 @@ import java.util.ArrayList;
  * We simply list the categories (Musics, artists, albums) and redirect the user to the corresponding activity
  */
 public class ListCategoryActivity extends AppCompatActivity {
-
-
-    private Intent playIntent;
     private MusicService musicSrv;
     private ArrayList<Song> playList;
     private boolean musicBound = false;
-    //connect to the service
-    private ServiceConnection musicConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            MusicBinder binder = (MusicBinder) service;
-            //get service
-            musicSrv = binder.getService();
-            //pass list
-            musicSrv.setList(playList);
-            musicBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            musicBound = false;
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,17 +34,10 @@ public class ListCategoryActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (playIntent == null) {
-            playIntent = new Intent(this, MusicService.class);
-            bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
-            startService(playIntent);
-        }
     }
 
     public void songPicked(View view) {
-        android.util.Log.d("MyApp", "I've selected a music ");
         this.musicSrv.setSong(Integer.parseInt(view.getTag().toString()));
-        android.util.Log.d("MyApp", "I've set a song ");
         this.musicSrv.playSong();
     }
 
@@ -94,8 +67,6 @@ public class ListCategoryActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        stopService(playIntent);
-        musicSrv = null;
         super.onDestroy();
     }
 }
