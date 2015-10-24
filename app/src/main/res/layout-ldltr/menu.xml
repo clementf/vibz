@@ -4,13 +4,16 @@
     android:layout_width="wrap_content"
     android:layout_height="fill_parent"
     android:weightSum="1"
-    android:padding="5dp">
+    android:padding="5dp"
+    >
+
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.05"
         android:weightSum="1">
+
         <Button
             android:id="@+id/pause_play_song"
             android:layout_width="0dp"
