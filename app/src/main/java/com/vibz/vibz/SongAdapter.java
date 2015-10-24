@@ -10,7 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -24,9 +26,11 @@ public class SongAdapter extends BaseAdapter {
 
     private ArrayList<Song> songs = new ArrayList<>();
     private LayoutInflater songInf;
+    private Context context;
 
 
     public SongAdapter(Context c, ArrayList<Song> theSongs) {
+        this.context = c;
         this.songs = theSongs;
         this.songInf = LayoutInflater.from(c);
     }
@@ -57,7 +61,7 @@ public class SongAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         //map to song layout
-        LinearLayout songLay = (LinearLayout) songInf.inflate
+        RelativeLayout songLay = (RelativeLayout) songInf.inflate
                 (R.layout.song, parent, false);
         TextView songView = (TextView) songLay.findViewById(R.id.song_title);
         TextView artistView = (TextView) songLay.findViewById(R.id.song_artist);
@@ -70,15 +74,28 @@ public class SongAdapter extends BaseAdapter {
 
         songDuration.setText(currSong.getStringDuration());
 
-        songLay.setOnClickListener(new View.OnClickListener() {
+        final View buttonAdd = songLay.findViewById(R.id.button_add);
+
+        buttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MusicService.PlaylistSongs.add(currSong);
-                if (MusicService.firstPlay == false) {
+                if (MusicService.isPlaying == false) {
                     MenuActivity.musicSrv.onFirstPlay();
-                    MusicService.firstPlay = true;
                     MusicService.isPlaying = true;
                 }
+                buttonAdd.setVisibility(View.INVISIBLE);
+                int duration = Toast.LENGTH_SHORT;
+                Toast toast = Toast.makeText(context, currSong.getTitle() + " added to the playlist", duration);
+                toast.show();
+            }
+        });
+
+        songLay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buttonAdd.setVisibility(View.VISIBLE);
+
             }
         });
         songLay.setTag(position);
