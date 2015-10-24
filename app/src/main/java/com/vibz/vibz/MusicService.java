@@ -1,7 +1,11 @@
 package com.vibz.vibz;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -9,8 +13,10 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.RemoteViews;
 
 import java.util.ArrayList;
 
@@ -28,6 +34,12 @@ public class MusicService extends Service implements
     public static boolean isPlaying = false;
     public static boolean firstPlay = false;
     private int songPosition;
+
+    public static final String NOTIFY_PREVIOUS = "com.vibz.vibz.previous";
+    public static final String NOTIFY_DELETE = "com.vibz.vibz.delete";
+    public static final String NOTIFY_PAUSE = "com.vibz.vibz.pause";
+    public static final String NOTIFY_PLAY = "com.vibz.vibz.play";
+    public static final String NOTIFY_NEXT = "com.vibz.vibz.next";
 
 
     public void onCreate() {
@@ -58,6 +70,7 @@ public class MusicService extends Service implements
         player.reset();
         Song playedSong = this.PlaylistSongs.get(this.songPosition);
         long currentSong = playedSong.getID();
+        customSimpleNotification(this.getApplicationContext());
         Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, currentSong);
         Log.d("clem", "uri is : " + trackUri);
         try {
@@ -94,6 +107,7 @@ public class MusicService extends Service implements
         MusicService.firstPlay=true;
         this.setSong(0);
         this.playSong();
+
     }
 
     public void pauseSong(){
@@ -149,5 +163,40 @@ public class MusicService extends Service implements
         MusicService getService() {
             return MusicService.this;
         }
+    }
+
+
+    public static void customSimpleNotification(Context context) {
+        RemoteViews simpleView = new RemoteViews(context.getPackageName(), R.layout.custom_notification);
+
+        Notification notification = new NotificationCompat.Builder(context)
+                .setSmallIcon(R.drawable.ic_home)
+                .setContentTitle("Custom Big View").build();
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        notification.contentView = simpleView;
+        notification.contentView.setTextViewText(R.id.textSongName, PlaylistSongs.get(0).getTitle());
+        notification.contentView.setTextViewText(R.id.textAlbumName, PlaylistSongs.get(0).getArtist());
+
+        setListeners(simpleView, context);
+
+        NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        nm.notify(7, notification);
+    }
+
+
+
+    private static void setListeners(RemoteViews view, Context context) {
+        Intent pause = new Intent(NOTIFY_PAUSE);
+        Intent next = new Intent(NOTIFY_NEXT);
+        Intent play = new Intent(NOTIFY_PLAY);
+
+        /*PendingIntent pPause = PendingIntent.getBroadcast(context, 0, pause, PendingIntent.FLAG_UPDATE_CURRENT);
+        view.setOnClickPendingIntent(R.id.btnPause, pPause);
+
+        PendingIntent pNext = PendingIntent.getBroadcast(context, 0, next, PendingIntent.FLAG_UPDATE_CURRENT);
+        view.setOnClickPendingIntent(R.id.btnNext, pNext);
+
+        PendingIntent pPlay = PendingIntent.getBroadcast(context, 0, play, PendingIntent.FLAG_UPDATE_CURRENT);
+        view.setOnClickPendingIntent(R.id.btnPlay, pPlay);*/
     }
 }
