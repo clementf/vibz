@@ -54,7 +54,7 @@
                 android:background="@drawable/rounded_button"
                 android:text=""
                 android:textColor="#FFF9F9F9"
-                android:visibility="invisible" />
+                 />
 
         </RelativeLayout>
 
