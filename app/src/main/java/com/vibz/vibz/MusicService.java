@@ -90,6 +90,7 @@ public class MusicService extends Service implements
     }
 
     public void onFirstPlay(){
+        MusicService.firstPlay=true;
         this.setSong(0);
         this.playSong();
     }

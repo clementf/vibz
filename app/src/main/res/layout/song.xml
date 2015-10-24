@@ -48,11 +48,11 @@
             android:gravity="center|right">
 
             <Button
-                android:id="@+id/button_add"
+                android:id="@+id/button_add_remove"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rounded_button"
-                android:text="+"
+                android:text=""
                 android:textColor="#FFF9F9F9"
                 android:visibility="invisible" />
 

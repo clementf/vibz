@@ -7,7 +7,9 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -81,12 +83,13 @@ public class MenuActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                if (MusicService.isPlaying) {
-                    int songProgress=seekBar.getProgress();
+                if (MusicService.firstPlay) {
+                    int songProgress = seekBar.getProgress();
                     musicSrv.playSongAgain(songProgress);
                     song_progress_text.setText(convertPositionString(songProgress) + "/" + MusicService.PlaylistSongs.get(0).getStringDuration());
                 }
             }
+
 
         });
 

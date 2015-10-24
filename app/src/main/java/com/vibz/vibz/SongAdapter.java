@@ -1,5 +1,6 @@
 package com.vibz.vibz;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.ServiceConnection;
@@ -9,6 +10,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -59,7 +61,7 @@ public class SongAdapter extends BaseAdapter {
      * @return
      */
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         //map to song layout
         RelativeLayout songLay = (RelativeLayout) songInf.inflate
                 (R.layout.song, parent, false);
@@ -74,27 +76,50 @@ public class SongAdapter extends BaseAdapter {
 
         songDuration.setText(currSong.getStringDuration());
 
-        final View buttonAdd = songLay.findViewById(R.id.button_add);
+        final String whereWeAre = context.getClass().getSimpleName();
+        final Button buttonAdd_remove = (Button) songLay.findViewById(R.id.button_add_remove);
 
-        buttonAdd.setOnClickListener(new View.OnClickListener() {
+        if(whereWeAre.equals("ChooseCategoryActivity")) {
+            buttonAdd_remove.setText("+");
+        }
+        else if (whereWeAre.equals("MenuActivity")){
+            buttonAdd_remove.setText("-");
+        }
+
+        buttonAdd_remove.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-                MusicService.PlaylistSongs.add(currSong);
-                if (MusicService.isPlaying == false) {
-                    MenuActivity.musicSrv.onFirstPlay();
-                    MusicService.isPlaying = true;
+                //Get the name of the current activity
+                if(whereWeAre.equals("ChooseCategoryActivity")) {
+                    MusicService.PlaylistSongs.add(currSong);
+                    if (MusicService.isPlaying == false) {
+                        MenuActivity.musicSrv.onFirstPlay();
+                        MusicService.isPlaying = true;
+                    }
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context, currSong.getTitle() + " added to the playlist", duration);
+                    toast.show();
                 }
-                buttonAdd.setVisibility(View.INVISIBLE);
-                int duration = Toast.LENGTH_SHORT;
-                Toast toast = Toast.makeText(context, currSong.getTitle() + " added to the playlist", duration);
-                toast.show();
+                else if(whereWeAre.equals("MenuActivity")){
+                    if(MusicService.PlaylistSongs.size()>1) {
+                        MusicService.PlaylistSongs.remove(currSong);
+                        MenuActivity.songAdt.notifyDataSetChanged();
+                        int duration = Toast.LENGTH_SHORT;
+                        Toast toast = Toast.makeText(context, currSong.getTitle() + " removed to the playlist", duration);
+                        toast.show();
+                    }
+                }
+                buttonAdd_remove.setVisibility(View.INVISIBLE);
+
             }
         });
 
         songLay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                buttonAdd.setVisibility(View.VISIBLE);
+                if(whereWeAre.equals("MenuActivity") &&  position == 0 ){}
+                else buttonAdd_remove.setVisibility(View.VISIBLE);
 
             }
         });
