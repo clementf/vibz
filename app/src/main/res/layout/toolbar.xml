@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:elevation="4dp"
-    android:background="@color/colorPrimary">
+    android:textColor="#FF1C7CCE"
+    android:background="@color/black_100_opacity">
 
 </android.support.v7.widget.Toolbar>

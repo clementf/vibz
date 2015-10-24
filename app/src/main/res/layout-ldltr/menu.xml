@@ -3,29 +3,72 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="fill_parent"
-    android:weightSum="1"
+    android:weightSum="100"
     android:padding="5dp"
+    android:background="@color/black_100_opacity"
     >
 
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.05"
+        android:orientation="vertical"
+        android:layout_weight="0.1">
+
+        <TextView
+            android:id="@+id/firstsong_title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FF1C7CCE"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:text=""/>
+
+        <TextView
+            android:id="@+id/firstsong_artist"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FF1C7CCE"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:text=""/>
+
+        <TextView
+            android:id="@+id/firstsong_duration"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FF1C7CCE"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:text=""/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="10"
+        android:gravity="center"
         android:weightSum="1">
+
 
         <Button
             android:id="@+id/pause_play_song"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.2"
+            android:layout_margin="10dp"
             android:onClick="onPausePlaySong"
             android:text="| |"
             android:textAllCaps="true"
             android:textColor="#FF1C7CCE"
-            android:textSize="20sp"
+            android:textSize="40sp"
             android:textStyle="bold"
+            android:layout_gravity="center_vertical|center_horizontal"
             android:clickable="true"
+            android:background="@drawable/button_circle"
             />
         <Button
             android:id="@+id/next_song"
@@ -33,40 +76,49 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.2"
             android:onClick="onNextSong"
+            android:layout_margin="10dp"
+            android:layout_gravity="center_vertical|center_horizontal"
             android:text=">|"
             android:textAllCaps="true"
             android:textColor="#FF1C7CCE"
-            android:textSize="20sp"
+            android:textSize="40sp"
             android:textStyle="bold"
             android:clickable="true"
+            android:background="@drawable/button_circle"
             />
+
     </LinearLayout>
 
     <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.05"
+        android:layout_weight='10'
         android:weightSum="1"
         >
-    <SeekBar
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/musicProgress"
-        android:layout_weight="0.95"
-         />
         <TextView
             android:id="@+id/song_progress_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.05"
-            android:text="" />
+            android:text=""
+            android:layout_weight="0.1"
+            android:textColor="#FF1C7CCE"
+            />
+    <SeekBar
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/musicProgress"
+        android:layout_weight="0.9"
+        android:background="@drawable/seekbar_shape"
+         />
+
     </LinearLayout>
 
     <ListView
         android:id="@+id/playlist"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.8"
+        android:layout_weight="80"
         >
 
     </ListView>
@@ -75,6 +127,7 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="10"
         android:weightSum="1"
         android:padding="5dp">
     <Button
@@ -90,6 +143,7 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:clickable="true"
+        android:background="@drawable/button_shape"
         />
     <Button
         android:id="@+id/add_song"
@@ -103,6 +157,7 @@
         android:textColor="#FF1C7CCE"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:background="@drawable/button_shape"
         android:clickable="true" />
 
 

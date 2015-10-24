@@ -57,21 +57,19 @@ public class SongAdapter extends BaseAdapter {
      */
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        //map to song layout
+        final String whereWeAre = context.getClass().getSimpleName();
         RelativeLayout songLay = (RelativeLayout) songInf.inflate
-                (R.layout.song, parent, false);
+                    (R.layout.song, parent, false);
+        final Song currSong = songs.get(position);
+
         TextView songView = (TextView) songLay.findViewById(R.id.song_title);
         TextView artistView = (TextView) songLay.findViewById(R.id.song_artist);
         TextView songDuration = (TextView) songLay.findViewById(R.id.song_duration);
-
-        final Song currSong = songs.get(position);
-
         songView.setText(currSong.getTitle());
         artistView.setText(currSong.getArtist());
-
         songDuration.setText(currSong.getStringDuration());
 
-        final String whereWeAre = context.getClass().getSimpleName();
+
         final Button buttonAddRemove = (Button) songLay.findViewById(R.id.button_add_remove);
 
         if(whereWeAre.equals("ChooseCategoryActivity") || whereWeAre.equals("SearchActivity")) {
@@ -114,14 +112,11 @@ public class SongAdapter extends BaseAdapter {
         songLay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //CACA
-                if(whereWeAre.equals("MenuActivity") &&  position == 0 ){}
-                else {
+                if(position>0 || !whereWeAre.equals("MenuActivity")){
                     buttonAddRemove.setVisibility(View.VISIBLE);
                     showedButton = position;
                     notifyDataSetChanged();
                 }
-
 
             }
         });
