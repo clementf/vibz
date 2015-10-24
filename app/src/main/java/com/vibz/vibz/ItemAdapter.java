@@ -63,7 +63,10 @@ public class ItemAdapter extends BaseAdapter {
         //get title and artist views
         TextView itemView = (TextView) itemLay.findViewById(R.id.item_title);
         //get item
-        itemView.setText(items.get(position).toString());
+        if (typeView.equals("album"))
+            itemView.setText(MusicAccess.getAlbumById(this.context, Integer.parseInt(items.get(position))));
+        if (typeView.equals("artist"))
+            itemView.setText(MusicAccess.getArtistById(this.context, Integer.parseInt(items.get(position))));
         final String itemName = items.get(position).toString();
         //set position as tag
         itemLay.setTag(position);
@@ -78,14 +81,13 @@ public class ItemAdapter extends BaseAdapter {
                 if (type.equals("artist")) {
                     nextType = "album";
                     //Restriction by artist
-                    selection = MediaStore.Audio.Media.ARTIST + " = '" + itemName + "'";
-                    android.util.Log.d("clem", selection);
+                    selection = MediaStore.Audio.Media.ARTIST_ID + " = '" + itemName + "'";
                 }
 
                 if (type.equals("album")) {
                     nextType = "song";
-                    selection = MediaStore.Audio.Media.ALBUM + " = '" + itemName + "'";
-                    android.util.Log.d("clem", selection);
+                    //Restriction by artist, and album
+                    selection = MediaStore.Audio.Media.ALBUM_ID + " = '" + itemName + "'";
                 }
 
                 //TODO : handle errors

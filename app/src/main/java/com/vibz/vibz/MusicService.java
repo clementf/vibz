@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -74,7 +73,7 @@ public class MusicService extends Service implements
         try {
             player.setDataSource(getApplicationContext(), trackUri);
         } catch (Exception e) {
-            Log.e("MUSIC SERVICE", "Error setting data source", e);
+            android.util.Log.e("MUSIC SERVICE", "Error setting data source", e);
         }
 
         //Prepare (Load) the song

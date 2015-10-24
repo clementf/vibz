@@ -73,9 +73,10 @@ public class ChooseCategoryActivity extends AppCompatActivity {
         }
         //If the user selected the list of all albums
         else if (type.equals("album")) {
-            getAllAlbums(this.selection);
-            ItemAdapter itemAdt = new ItemAdapter(this, listItems, this.type);
-            itemView.setAdapter(itemAdt);
+            if (getAllAlbums(this.selection)) {
+                ItemAdapter itemAdt = new ItemAdapter(this, listItems, this.type);
+                itemView.setAdapter(itemAdt);
+            }
         }
         //If the user selected the list of all artists
         else if (type.equals("artist")) {
@@ -105,11 +106,11 @@ public class ChooseCategoryActivity extends AppCompatActivity {
         if (musicCursor != null && musicCursor.moveToFirst()) {
             //get columns
             int titleColumn = musicCursor.getColumnIndex
-                    (android.provider.MediaStore.Audio.Media.TITLE);
+                    (MediaStore.Audio.Media.TITLE);
             int idColumn = musicCursor.getColumnIndex
-                    (android.provider.MediaStore.Audio.Media._ID);
+                    (MediaStore.Audio.Media._ID);
             int artistColumn = musicCursor.getColumnIndex
-                    (android.provider.MediaStore.Audio.Media.ARTIST);
+                    (MediaStore.Audio.Media.ARTIST);
             long durationColumn = musicCursor.getColumnIndex
                     (MediaStore.Audio.Media.DURATION);
             //add songs to list
@@ -117,6 +118,8 @@ public class ChooseCategoryActivity extends AppCompatActivity {
                 long thisId = musicCursor.getLong(idColumn);
                 String thisTitle = musicCursor.getString(titleColumn);
                 String thisArtist = musicCursor.getString(artistColumn);
+                android.util.Log.d("clem", "search results allSongs " + musicCursor.getString(titleColumn));
+                android.util.Log.d("clem", "song id : " + musicCursor.getString(artistColumn));
                 this.listSongs.add(new Song(thisId, thisTitle, thisArtist, durationColumn));
             }
             while (musicCursor.moveToNext());
@@ -125,8 +128,9 @@ public class ChooseCategoryActivity extends AppCompatActivity {
 
     /**
      * Get the album list from the device
+     * Return true if some albums are found, otherwise false
      */
-    public void getAllAlbums(String selection) {
+    public boolean getAllAlbums(String selection) {
 
         Cursor musicCursor = MusicAccess.getAllUniqueAlbums(this, selection);
         //Once we have the music, we iterate over it
@@ -136,10 +140,21 @@ public class ChooseCategoryActivity extends AppCompatActivity {
                     (MediaStore.Audio.Media.ALBUM);
 
             do {
-                this.listItems.add(musicCursor.getString(titleColumn));
+                android.util.Log.d("clem", "search results allAlbums " + musicCursor.getString(titleColumn));
+                this.listItems.add(musicCursor.getString(0));
             }
             while (musicCursor.moveToNext());
+            return true;
         }
+        //No album found, so we get all the tracks for ths artist
+        else if (musicCursor != null && musicCursor.getCount() == 0) {
+            this.getAllSongs(selection);
+            SongAdapter songAdt = new SongAdapter(this, listSongs);
+            itemView.setAdapter(songAdt);
+            return false;
+        }
+
+        return false;
 
     }
 
@@ -154,8 +169,13 @@ public class ChooseCategoryActivity extends AppCompatActivity {
             int titleColumn = musicCursor.getColumnIndex
                     (MediaStore.Audio.Media.ARTIST);
 
+            int titleColumnID = musicCursor.getColumnIndex
+                    (MediaStore.Audio.Media.ARTIST_ID);
+
             do {
-                this.listItems.add(musicCursor.getString(titleColumn));
+                android.util.Log.d("clem", "artist id : " + musicCursor.getString(0));
+                android.util.Log.d("clem", "search results allArtists " + musicCursor.getString(titleColumn));
+                this.listItems.add(musicCursor.getString(0));
             }
             while (musicCursor.moveToNext());
         }

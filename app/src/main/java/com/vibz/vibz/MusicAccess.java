@@ -23,7 +23,14 @@ public class MusicAccess {
 
         ContentResolver contentResolver = context.getContentResolver();
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        selection += " AND " + MediaStore.Audio.Media.IS_MUSIC + "!= 0";
+
+        //selection is the restriction by album, artists or both
+        if (selection == null || selection.equals("")) {
+            selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
+        } else {
+            selection += " AND " + MediaStore.Audio.Media.IS_MUSIC + "!= 0";
+        }
+
 
         return contentResolver.query(uri, null, selection, null, sortOrder);
 
@@ -92,5 +99,35 @@ public class MusicAccess {
                 null,
                 MediaStore.Audio.Playlists.NAME + " ASC");
 
+    }
+
+    public static String getAlbumById(Context context, Integer id) {
+        ContentResolver contentResolver = context.getContentResolver();
+        String[] projection = {MediaStore.Audio.Albums.ALBUM};
+        String selection = MediaStore.Audio.Albums._ID + " = " + id;
+        Cursor musicCursor = contentResolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                projection,
+                selection,
+                null,
+                MediaStore.Audio.Albums.ALBUM + " ASC");
+        if (musicCursor != null && musicCursor.moveToFirst()) {
+            return musicCursor.getString(0);
+        }
+        return "";
+    }
+
+    public static String getArtistById(Context context, Integer id) {
+        ContentResolver contentResolver = context.getContentResolver();
+        String[] projection = {MediaStore.Audio.Artists.ARTIST};
+        String selection = MediaStore.Audio.Artists._ID + " = " + id;
+        Cursor musicCursor = contentResolver.query(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
+                projection,
+                selection,
+                null,
+                MediaStore.Audio.Artists.ARTIST + " ASC");
+        if (musicCursor != null && musicCursor.moveToFirst()) {
+            return musicCursor.getString(0);
+        }
+        return "";
     }
 }
