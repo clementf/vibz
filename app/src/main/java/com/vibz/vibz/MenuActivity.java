@@ -18,16 +18,17 @@ import java.util.ArrayList;
 public class MenuActivity  extends AppCompatActivity {
     private Intent playIntent;
     private ListView itemView;
-    public static ArrayList PlaylistSongs = new ArrayList<Song>();
     private boolean musicBound = false;
-    private MusicService musicSrv;
+    public static boolean isPlaying;
+    public static ArrayList PlaylistSongs = new ArrayList<Song>();
+    public static MusicService musicSrv;
 
     private ServiceConnection musicConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
             musicSrv = binder.getService();
-            musicSrv.setList(PlaylistSongs);
+            musicSrv.setList(MenuActivity.PlaylistSongs);
             musicBound = true;
         }
 
@@ -37,8 +38,10 @@ public class MenuActivity  extends AppCompatActivity {
         }
     };
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        android.util.Log.d("The_best","Let's debug this shit nigga");
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.menu);
         itemView = (ListView) findViewById(R.id.playlist);
@@ -79,8 +82,6 @@ public class MenuActivity  extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        stopService(playIntent);
-        musicSrv = null;
         super.onDestroy();
     }
 }

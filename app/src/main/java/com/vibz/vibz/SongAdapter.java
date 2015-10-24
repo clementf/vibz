@@ -1,7 +1,11 @@
 package com.vibz.vibz;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -20,6 +24,7 @@ public class SongAdapter extends BaseAdapter {
 
     private ArrayList<Song> songs = new ArrayList<>();
     private LayoutInflater songInf;
+
 
     public SongAdapter(Context c, ArrayList<Song> theSongs) {
         this.songs = theSongs;
@@ -63,10 +68,11 @@ public class SongAdapter extends BaseAdapter {
         songLay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //view.getTag() = Song ID = song position in the list
-                //musicSrv.setSong(Integer.parseInt(view.getTag().toString()));
-                //this.musicSrv.playSong();
                 MenuActivity.setPlaylistSongs(currSong);
+                if (MenuActivity.isPlaying == false) {
+                    MenuActivity.musicSrv.onFirstPlay();
+                    MenuActivity.isPlaying = true;
+                }
             }
         });
         songLay.setTag(position);
