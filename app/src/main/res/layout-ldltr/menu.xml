@@ -38,7 +38,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
-        android:onClick="AddSong"
+        android:onClick="AddSongButton"
         android:padding="10dp"
         android:text="Add a song"
         android:textAllCaps="true"

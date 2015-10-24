@@ -10,17 +10,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ListView;
 
-import java.util.ArrayList;
-
 /**
  * Created by nicolasszewe on 23/10/15.
  */
 public class MenuActivity  extends AppCompatActivity {
-    public static boolean isPlaying;
-    public static ArrayList PlaylistSongs = new ArrayList<Song>();
     public static MusicService musicSrv;
     public static SongAdapter songAdt;
-    private Intent playIntent;
+    private Intent musicServiceIntent;
     private ListView itemView;
     private boolean musicBound = false;
     private ServiceConnection musicConnection = new ServiceConnection() {
@@ -28,7 +24,7 @@ public class MenuActivity  extends AppCompatActivity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
             musicSrv = binder.getService();
-            musicSrv.setList(MenuActivity.PlaylistSongs);
+            musicSrv.setList(musicSrv.PlaylistSongs);
             musicBound = true;
         }
 
@@ -38,43 +34,38 @@ public class MenuActivity  extends AppCompatActivity {
         }
     };
 
-    public static ArrayList getPlaylistSongs() {
-        return PlaylistSongs;
-    }
-
-    public static void setPlaylistSongs(Song song) {
-        PlaylistSongs.add(song);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         android.util.Log.d("The_best", "Let's debug this shit nigga");
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.menu);
-        itemView = (ListView) findViewById(R.id.playlist);
-        this.songAdt = new SongAdapter(this, PlaylistSongs);
-        itemView.setAdapter(songAdt);
-        if (playIntent == null) {
-            playIntent = new Intent(this, MusicService.class);
-            bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
-            startService(playIntent);
+        refreshPlaylist();
+
+        if (musicServiceIntent == null) {
+            musicServiceIntent = new Intent(this, MusicService.class);
+            bindService(musicServiceIntent, musicConnection, Context.BIND_AUTO_CREATE);
+            startService(musicServiceIntent);
         }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        itemView = (ListView) findViewById(R.id.playlist);
-        this.songAdt = new SongAdapter(this, PlaylistSongs);
-        itemView.setAdapter(songAdt);
+        refreshPlaylist();
     }
 
+    public void refreshPlaylist(){
+        itemView = (ListView) findViewById(R.id.playlist);
+        this.songAdt = new SongAdapter(this, musicSrv.PlaylistSongs);
+        itemView.setAdapter(songAdt);
+    }
     public void CheckConnection(View view) {
         //Intent intent = new Intent(this, Connection.class);
         //startActivity(intent);
     }
 
-    public void AddSong(View view) {
+    public void AddSongButton(View view) {
         Intent intent = new Intent(this, ListCategoryActivity.class);
         startActivity(intent);
     }

@@ -68,10 +68,10 @@ public class SongAdapter extends BaseAdapter {
         songLay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MenuActivity.setPlaylistSongs(currSong);
-                if (MenuActivity.isPlaying == false) {
+                MusicService.PlaylistSongs.add(currSong);
+                if (MusicService.isPlaying == false) {
                     MenuActivity.musicSrv.onFirstPlay();
-                    MenuActivity.isPlaying = true;
+                    MusicService.isPlaying = true;
                 }
             }
         });

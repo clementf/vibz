@@ -21,11 +21,9 @@ public class MusicService extends Service implements
         MediaPlayer.OnCompletionListener {
 
     private final IBinder musicBind = new MusicBinder();
-    //media player
     private MediaPlayer player;
-    //song list
-    private ArrayList<Song> songs;
-    //current position
+    public static ArrayList<Song> PlaylistSongs = new ArrayList<Song>();
+    public static boolean isPlaying;
     private int songPosition;
 
 
@@ -47,7 +45,7 @@ public class MusicService extends Service implements
 
 
     public void setList(ArrayList<Song> theSongs) {
-        this.songs = theSongs;
+        this.PlaylistSongs = theSongs;
     }
 
     /**
@@ -56,7 +54,7 @@ public class MusicService extends Service implements
     public void playSong() {
         player.reset();
         //get song
-        Song playedSong = this.songs.get(this.songPosition);
+        Song playedSong = this.PlaylistSongs.get(this.songPosition);
         //get id
         long currentSong = playedSong.getID();
         //set uri
@@ -103,8 +101,8 @@ public class MusicService extends Service implements
     public void onCompletion(MediaPlayer mp) {
         //On supprime la dernière musique que si il y en a encore
         //TODO Update la vue de la playlist
-        if(MenuActivity.PlaylistSongs.size() > 1){
-            MenuActivity.PlaylistSongs.remove(0);
+        if(PlaylistSongs.size() > 1){
+            PlaylistSongs.remove(0);
             MenuActivity.songAdt.notifyDataSetChanged();
         }
         this.setSong(0);
