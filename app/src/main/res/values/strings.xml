@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">Vibz</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="search">Search</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_choose_category">ChooseCategoryActivity</string>
+    <string name="title_activity_search">SearchActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 </resources>

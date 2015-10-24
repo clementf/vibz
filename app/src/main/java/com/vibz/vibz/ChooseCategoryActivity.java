@@ -1,17 +1,22 @@
 package com.vibz.vibz;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,7 +27,7 @@ import java.util.Comparator;
  * Created by clement on 06/10/2015.
  * Display information from the music library based on the selection of the user on the ListCategoryActivity
  */
-public class ChooseCategoryActivity extends AppCompatActivity {
+public class ChooseCategoryActivity extends Activity {
 
     //Declarations
     private MusicService musicSrv;
@@ -185,17 +190,33 @@ public class ChooseCategoryActivity extends AppCompatActivity {
     /**
      * Add a menu in the navigation bar to go back to the main activity
      */
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.mainmenu, menu);
+        MenuItem menuItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setQueryHint("Type something...");
+        int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
+        View searchPlate = searchView.findViewById(searchPlateId);
+        if (searchPlate!=null) {
+            searchPlate.setBackgroundColor(Color.DKGRAY);
+            int searchTextId = searchPlate.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+            TextView searchText = (TextView) searchPlate.findViewById(searchTextId);
+            if (searchText!=null) {
+                searchText.setTextColor(Color.WHITE);
+                searchText.setHintTextColor(Color.WHITE);
+            }
+        }
         return true;
     }
+*/
 
     /**
      * Selection of an item in the menu
      */
-    @Override
+    /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_home:
@@ -206,7 +227,7 @@ public class ChooseCategoryActivity extends AppCompatActivity {
                 break;
         }
         return true;
-    }
+    }*/
 
 
 }

@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -57,6 +58,7 @@ public class MusicService extends Service implements
         Song playedSong = this.PlaylistSongs.get(this.songPosition);
         long currentSong = playedSong.getID();
         Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, currentSong);
+        Log.d("clem", "uri is : " + trackUri);
         try {
             player.setDataSource(getApplicationContext(), trackUri);
         } catch (Exception e) {
