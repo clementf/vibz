@@ -28,33 +28,24 @@ public class MusicService extends Service implements
     //current position
     private int songPosition;
 
+
     public void onCreate() {
-        //create the service
         super.onCreate();
-        //initialize position (Index of the playlist)
         this.songPosition = 0;
-        //create player
         this.player = new MediaPlayer();
         initMusicPlayer();
     }
 
 
     public void initMusicPlayer() {
-        //set player properties
-        //Can run when the screen is locked
         this.player.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
-        //We stream music
         this.player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
         this.player.setOnPreparedListener(this);
         this.player.setOnCompletionListener(this);
         this.player.setOnErrorListener(this);
-
     }
 
-    /**
-     * Connect the playlist to the player's queue
-     */
+
     public void setList(ArrayList<Song> theSongs) {
         this.songs = theSongs;
     }
@@ -86,10 +77,9 @@ public class MusicService extends Service implements
      * @param songIndex
      */
     public void setSong(int songIndex) {
-        android.util.Log.d("The_best", "Hey hey hey");
         this.songPosition = songIndex;
-        android.util.Log.d("The_best","All good here");
     }
+
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -103,9 +93,21 @@ public class MusicService extends Service implements
         return false;
     }
 
+    public void onFirstPlay(){
+        this.setSong(0);
+        this.playSong();
+    }
+
+
     @Override
     public void onCompletion(MediaPlayer mp) {
-
+        //On supprime la dernière musique que si il y en a encore
+        //TODO Update la vue de la playlist
+        if(MenuActivity.PlaylistSongs.size() > 1){
+            MenuActivity.PlaylistSongs.remove(0);
+        }
+        this.setSong(0);
+        this.playSong();
     }
 
     @Override
@@ -115,7 +117,6 @@ public class MusicService extends Service implements
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        //start playback
         mp.start();
     }
 
