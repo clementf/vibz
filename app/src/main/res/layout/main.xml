@@ -3,15 +3,15 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
+    android:weightSum="100"
     android:background="@color/black_100_opacity">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        android:layout_width="match_parent"
-        android:id="@+id/linearLayout1"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="80"
+        android:id="@+id/linearLayout1">
 
         <fragment
             android:id="@+id/frag_list"
@@ -23,20 +23,25 @@
 
     </LinearLayout>
 
+
     <Button
         android:id="@+id/b1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
+        android:layout_weight="10"
         android:background="@drawable/button_shape"
         android:text="Activer p2p"
+        android:layout_margin="10dp"
         android:textColor="@color/blue_text"/>
 
     <Button
         android:id="@+id/b2"
+        android:layout_margin="10dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
+        android:layout_weight="10"
         android:text="Chercher un device"
         android:background="@drawable/button_shape"
         android:textColor="@color/blue_text"/>/>
