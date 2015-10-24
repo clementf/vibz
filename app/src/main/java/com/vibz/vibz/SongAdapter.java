@@ -61,7 +61,7 @@ public class SongAdapter extends BaseAdapter {
      * @return
      */
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         //map to song layout
         RelativeLayout songLay = (RelativeLayout) songInf.inflate
                 (R.layout.song, parent, false);
@@ -118,7 +118,8 @@ public class SongAdapter extends BaseAdapter {
         songLay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                buttonAdd_remove.setVisibility(View.VISIBLE);
+                if(whereWeAre.equals("MenuActivity") &&  position == 0 ){}
+                else buttonAdd_remove.setVisibility(View.VISIBLE);
 
             }
         });

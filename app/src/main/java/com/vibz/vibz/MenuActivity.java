@@ -83,12 +83,13 @@ public class MenuActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                if (MusicService.isPlaying) {
-                    int songProgress=seekBar.getProgress();
+                if (MusicService.firstPlay) {
+                    int songProgress = seekBar.getProgress();
                     musicSrv.playSongAgain(songProgress);
                     song_progress_text.setText(convertPositionString(songProgress) + "/" + MusicService.PlaylistSongs.get(0).getStringDuration());
                 }
             }
+
 
         });
 
