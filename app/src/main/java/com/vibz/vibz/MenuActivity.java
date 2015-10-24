@@ -25,7 +25,7 @@ public class MenuActivity extends AppCompatActivity {
     private Intent musicServiceIntent;
     private ListView itemView;
     private boolean musicBound = false;
-    private SeekBar seek_bar;
+    public static SeekBar seek_bar;
     private Handler seekHandler = new Handler();
     private TextView song_progress_text;
     private ServiceConnection musicConnection = new ServiceConnection() {
@@ -87,6 +87,8 @@ public class MenuActivity extends AppCompatActivity {
                     int songProgress = seekBar.getProgress();
                     musicSrv.playSongAgain(songProgress);
                     song_progress_text.setText(convertPositionString(songProgress) + "/" + MusicService.PlaylistSongs.get(0).getStringDuration());
+                    Button p = (Button)findViewById(R.id.pause_play_song);
+                    p.setText("| |");
                 }
             }
 
