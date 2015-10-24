@@ -9,16 +9,19 @@ import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Button;
+import android.widget.SeekBar;
 
 /**
  * Created by nicolasszewe on 23/10/15.
  */
-public class MenuActivity  extends AppCompatActivity {
+public class MenuActivity extends AppCompatActivity {
     public static MusicService musicSrv;
     public static SongAdapter songAdt;
     private Intent musicServiceIntent;
     private ListView itemView;
     private boolean musicBound = false;
+    SeekBar seek_bar;
     private ServiceConnection musicConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -53,6 +56,8 @@ public class MenuActivity  extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         refreshPlaylist();
+        //seek_bar = (SeekBar) findViewById(R.id.musicProgress);
+        //seek_bar.setMax((int)musicSrv.PlaylistSongs.get(0).getDuration());
     }
 
     public void refreshPlaylist(){
@@ -60,6 +65,27 @@ public class MenuActivity  extends AppCompatActivity {
         this.songAdt = new SongAdapter(this, musicSrv.PlaylistSongs);
         itemView.setAdapter(songAdt);
     }
+
+    public void onPausePlaySong(View view){
+        if(musicSrv.isPlaying==true){
+            musicSrv.pauseSong();
+            musicSrv.isPlaying = false;
+            Button p = (Button)findViewById(R.id.pause_play_song);
+            p.setText(">");
+
+        }
+        else if(musicSrv.PlaylistSongs.size()>0){
+            musicSrv.playSongAgain();
+            musicSrv.isPlaying = true;
+            Button p = (Button)findViewById(R.id.pause_play_song);
+            p.setText("| |");
+        }
+    }
+
+    public void onNextSong(View view){
+       musicSrv.nextSong();
+    }
+
     public void CheckConnection(View view) {
         //Intent intent = new Intent(this, Connection.class);
         //startActivity(intent);

@@ -23,7 +23,8 @@ public class MusicService extends Service implements
     private final IBinder musicBind = new MusicBinder();
     private MediaPlayer player;
     public static ArrayList<Song> PlaylistSongs = new ArrayList<Song>();
-    public static boolean isPlaying;
+    public static boolean isPlaying = false;
+    public static boolean firstPlay = false;
     private int songPosition;
 
 
@@ -53,19 +54,14 @@ public class MusicService extends Service implements
      */
     public void playSong() {
         player.reset();
-        //get song
         Song playedSong = this.PlaylistSongs.get(this.songPosition);
-        //get id
         long currentSong = playedSong.getID();
-        //set uri
         Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, currentSong);
         try {
             player.setDataSource(getApplicationContext(), trackUri);
         } catch (Exception e) {
             android.util.Log.e("MUSIC SERVICE", "Error setting data source", e);
         }
-
-        //Prepare (Load) the song
         player.prepareAsync();
     }
 
@@ -96,11 +92,30 @@ public class MusicService extends Service implements
         this.playSong();
     }
 
+    public void pauseSong(){
+        player.pause();
+    }
 
+    public int getPosn(){
+        return player.getCurrentPosition();
+    }
+
+    public void playSongAgain(){
+        player.seekTo(getPosn());
+        player.start();
+    }
+
+    public void nextSong(){
+        if(PlaylistSongs.size() > 1){
+            PlaylistSongs.remove(0);
+            MenuActivity.songAdt.notifyDataSetChanged();
+            this.setSong(0);
+            this.playSong();
+        }
+    }
     @Override
     public void onCompletion(MediaPlayer mp) {
         //On supprime la dernière musique que si il y en a encore
-        //TODO Update la vue de la playlist
         if(PlaylistSongs.size() > 1){
             PlaylistSongs.remove(0);
             MenuActivity.songAdt.notifyDataSetChanged();

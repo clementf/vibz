@@ -61,16 +61,23 @@ public class SongAdapter extends BaseAdapter {
                 (R.layout.song, parent, false);
         TextView songView = (TextView) songLay.findViewById(R.id.song_title);
         TextView artistView = (TextView) songLay.findViewById(R.id.song_artist);
+        TextView songDuration = (TextView) songLay.findViewById(R.id.song_duration);
 
         final Song currSong = songs.get(position);
+
         songView.setText(currSong.getTitle());
         artistView.setText(currSong.getArtist());
+        String seconds = String.valueOf((currSong.getDuration()  % 60000) / 1000);
+        String minutes = String.valueOf(currSong.getDuration() / 60000);
+        songDuration.setText(minutes+ ":" + seconds);
+
         songLay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MusicService.PlaylistSongs.add(currSong);
-                if (MusicService.isPlaying == false) {
+                if (MusicService.firstPlay == false) {
                     MenuActivity.musicSrv.onFirstPlay();
+                    MusicService.firstPlay = true;
                     MusicService.isPlaying = true;
                 }
             }

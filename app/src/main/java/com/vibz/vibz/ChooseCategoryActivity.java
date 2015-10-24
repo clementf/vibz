@@ -111,16 +111,17 @@ public class ChooseCategoryActivity extends AppCompatActivity {
                     (MediaStore.Audio.Media._ID);
             int artistColumn = musicCursor.getColumnIndex
                     (MediaStore.Audio.Media.ARTIST);
-            long durationColumn = musicCursor.getColumnIndex
+            int durationColumn = musicCursor.getColumnIndex
                     (MediaStore.Audio.Media.DURATION);
             //add songs to list
             do {
                 long thisId = musicCursor.getLong(idColumn);
                 String thisTitle = musicCursor.getString(titleColumn);
                 String thisArtist = musicCursor.getString(artistColumn);
+                Long thisDuration = musicCursor.getLong(durationColumn);
                 android.util.Log.d("clem", "search results allSongs " + musicCursor.getString(titleColumn));
                 android.util.Log.d("clem", "song id : " + musicCursor.getString(artistColumn));
-                this.listSongs.add(new Song(thisId, thisTitle, thisArtist, durationColumn));
+                this.listSongs.add(new Song(thisId, thisTitle, thisArtist, thisDuration));
             }
             while (musicCursor.moveToNext());
         }

@@ -19,4 +19,12 @@
         android:textColor="#FF245D9C"
         android:textSize="18sp" />
 
+    <TextView
+        android:id="@+id/song_duration"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#FF245D9C"
+        android:textSize="15sp" />
+
+
 </LinearLayout>
