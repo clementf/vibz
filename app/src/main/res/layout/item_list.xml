@@ -2,8 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#FFF9F9F9"
     android:orientation="vertical"
+    android:background="@color/black_100_opacity"
     tools:context=".chooseActivity">
     <include
         android:id="@+id/toolbar"

@@ -68,6 +68,7 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        addFirstSong();
         refreshPlaylist();
         seek_bar = (SeekBar) findViewById(R.id.musicProgress);
         song_progress_text = (TextView) findViewById(R.id.song_progress_text);
@@ -113,7 +114,22 @@ public class MenuActivity extends AppCompatActivity {
     }
 
 
-
+    public void addFirstSong(){
+        if(musicSrv.PlaylistSongs.size()>0) {
+            String artist = musicSrv.PlaylistSongs.get(0).getArtist();
+            TextView firstsongView = (TextView) findViewById(R.id.firstsong_title);
+            TextView firstartistView = (TextView) findViewById(R.id.firstsong_artist);
+            if(artist.equals("<unknown>")){
+                firstartistView.setText("");
+            }
+            else {
+                firstartistView.setText(musicSrv.PlaylistSongs.get(0).getArtist());
+            }
+            TextView firstsongDuration = (TextView) findViewById(R.id.firstsong_duration);
+            firstsongView.setText(musicSrv.PlaylistSongs.get(0).getTitle());
+            firstsongDuration.setText(musicSrv.PlaylistSongs.get(0).getStringDuration());
+        }
+    }
 
     public String convertPositionString(long position){
         String seconds = String.valueOf((position  % 60000) / 1000);
@@ -146,6 +162,7 @@ public class MenuActivity extends AppCompatActivity {
 
     public void onNextSong(View view){
        musicSrv.nextSong();
+        addFirstSong();
     }
 
     public void CheckConnection(View view) {

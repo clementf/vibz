@@ -26,7 +26,8 @@
 
         <activity
             android:name=".ChooseCategoryActivity"
-            android:label="Vibz - Choose your song" />
+            android:label="Vibz - Choose your song"
+            />
         <activity
             android:name=".ListCategoryActivity"
             android:label="Vibz - Choose your song" />
