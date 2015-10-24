@@ -105,6 +105,7 @@ public class MusicService extends Service implements
         //TODO Update la vue de la playlist
         if(MenuActivity.PlaylistSongs.size() > 1){
             MenuActivity.PlaylistSongs.remove(0);
+            MenuActivity.songAdt.notifyDataSetChanged();
         }
         this.setSong(0);
         this.playSong();

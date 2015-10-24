@@ -16,13 +16,13 @@ import java.util.ArrayList;
  * Created by nicolasszewe on 23/10/15.
  */
 public class MenuActivity  extends AppCompatActivity {
-    private Intent playIntent;
-    private ListView itemView;
-    private boolean musicBound = false;
     public static boolean isPlaying;
     public static ArrayList PlaylistSongs = new ArrayList<Song>();
     public static MusicService musicSrv;
-
+    public static SongAdapter songAdt;
+    private Intent playIntent;
+    private ListView itemView;
+    private boolean musicBound = false;
     private ServiceConnection musicConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -38,36 +38,35 @@ public class MenuActivity  extends AppCompatActivity {
         }
     };
 
+    public static ArrayList getPlaylistSongs() {
+        return PlaylistSongs;
+    }
+
+    public static void setPlaylistSongs(Song song) {
+        PlaylistSongs.add(song);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        android.util.Log.d("The_best","Let's debug this shit nigga");
+        android.util.Log.d("The_best", "Let's debug this shit nigga");
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.menu);
         itemView = (ListView) findViewById(R.id.playlist);
-        SongAdapter songAdt = new SongAdapter(this, PlaylistSongs);
+        this.songAdt = new SongAdapter(this, PlaylistSongs);
         itemView.setAdapter(songAdt);
         if (playIntent == null) {
             playIntent = new Intent(this, MusicService.class);
             bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
             startService(playIntent);
         }
-        }
+    }
 
     @Override
     protected void onStart() {
         super.onStart();
         itemView = (ListView) findViewById(R.id.playlist);
-        SongAdapter songAdt = new SongAdapter(this,PlaylistSongs);
+        this.songAdt = new SongAdapter(this, PlaylistSongs);
         itemView.setAdapter(songAdt);
-    }
-
-    public static void setPlaylistSongs(Song song){
-        PlaylistSongs.add(song);
-    }
-
-    public static ArrayList getPlaylistSongs(){
-        return PlaylistSongs;
     }
 
     public void CheckConnection(View view) {
