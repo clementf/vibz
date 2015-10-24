@@ -116,9 +116,11 @@ public class SongAdapter extends BaseAdapter {
             public void onClick(View v) {
                 //CACA
                 if(whereWeAre.equals("MenuActivity") &&  position == 0 ){}
-                else buttonAddRemove.setVisibility(View.VISIBLE);
-                showedButton = position;
-                notifyDataSetChanged();
+                else {
+                    buttonAddRemove.setVisibility(View.VISIBLE);
+                    showedButton = position;
+                    notifyDataSetChanged();
+                }
 
 
             }
