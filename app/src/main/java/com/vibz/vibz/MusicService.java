@@ -10,6 +10,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
+import android.view.Menu;
 
 import java.util.ArrayList;
 
@@ -116,6 +117,7 @@ public class MusicService extends Service implements
     public void nextSong(){
         if(PlaylistSongs.size() > 1){
             PlaylistSongs.remove(0);
+            MenuActivity.seek_bar.setMax((int) MusicService.PlaylistSongs.get(0).getDuration());
             MenuActivity.songAdt.notifyDataSetChanged();
             this.setSong(0);
             this.playSong();
@@ -126,6 +128,7 @@ public class MusicService extends Service implements
         //On supprime la dernière musique que si il y en a encore
         if(PlaylistSongs.size() > 1){
             PlaylistSongs.remove(0);
+            MenuActivity.seek_bar.setMax((int) MusicService.PlaylistSongs.get(0).getDuration());
             MenuActivity.songAdt.notifyDataSetChanged();
         }
         this.setSong(0);
