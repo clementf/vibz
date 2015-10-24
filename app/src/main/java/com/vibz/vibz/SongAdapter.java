@@ -79,7 +79,7 @@ public class SongAdapter extends BaseAdapter {
         final String whereWeAre = context.getClass().getSimpleName();
         final Button buttonAdd_remove = (Button) songLay.findViewById(R.id.button_add_remove);
 
-        if(whereWeAre.equals("ChooseCategoryActivity")) {
+        if(whereWeAre.equals("ChooseCategoryActivity") || whereWeAre.equals("SearchActivity")) {
             buttonAdd_remove.setText("+");
         }
         else if (whereWeAre.equals("MenuActivity")){
@@ -91,7 +91,7 @@ public class SongAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 //Get the name of the current activity
-                if(whereWeAre.equals("ChooseCategoryActivity")) {
+                if(whereWeAre.equals("ChooseCategoryActivity") || whereWeAre.equals("SearchActivity")) {
                     MusicService.PlaylistSongs.add(currSong);
                     if (MusicService.isPlaying == false) {
                         MenuActivity.musicSrv.onFirstPlay();
