@@ -21,12 +21,14 @@
             android:layout_width="fill_parent"
             android:layout_height="0dip"
             android:layout_weight="1"
+            android:textColor="@color/blue_text"
             android:gravity="center_vertical" />
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="0dip"
             android:layout_weight="1"
             android:id="@+id/device_details"
+            android:textColor="@color/blue_text"
             android:singleLine="true"
             android:ellipsize="marquee" />
     </LinearLayout>

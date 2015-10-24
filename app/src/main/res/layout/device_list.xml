@@ -4,7 +4,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="3dp">
+    android:paddingTop="3dp"
+    android:background="@color/black_100_opacity">
 
     <TextView
         android:layout_width="fill_parent"
@@ -15,7 +16,7 @@
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:gravity="center_vertical"
-        android:background="@android:color/holo_blue_light" />
+        android:background="@color/black_100_opacity" />
 
     <!-- Self information -->
     <LinearLayout
@@ -40,12 +41,14 @@
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:textColor="@color/blue_text"
                 android:gravity="center_vertical" />
             <TextView
                 android:id="@+id/my_status"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:textColor="@color/blue_text"
                 android:singleLine="true"
                 android:ellipsize="marquee" />
         </LinearLayout>
@@ -55,13 +58,15 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
+        android:textColor="@color/blue_text"
         android:text="@string/label_peers" />
 
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:gravity="center_vertical"
-        android:background="@android:color/holo_blue_light" />
+        android:textColor="@color/blue_text"
+        />
 
     <!-- Available peers -->
     <ListView
@@ -76,5 +81,6 @@
         android:layout_width="match_parent"
         android:layout_gravity="center"
         android:layout_height="match_parent"
+        android:textColor="@color/blue_text"
         android:text="@string/empty_message" />
 </LinearLayout>
