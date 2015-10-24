@@ -182,8 +182,8 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public void CheckConnection(View view) {
-        //Intent intent = new Intent(this, Connection.class);
-        //startActivity(intent);
+        Intent intent = new Intent(this, WiFiDirectActivity.class);
+        startActivity(intent);
     }
 
     public void AddSongButton(View view) {
