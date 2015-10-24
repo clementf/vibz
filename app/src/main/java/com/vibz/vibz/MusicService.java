@@ -105,6 +105,11 @@ public class MusicService extends Service implements
         player.start();
     }
 
+    public void playSongAgain(int position){
+        player.seekTo(position);
+        player.start();
+    }
+
     public void nextSong(){
         if(PlaylistSongs.size() > 1){
             PlaylistSongs.remove(0);

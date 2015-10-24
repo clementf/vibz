@@ -43,12 +43,20 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.05"
+        android:weightSum="1"
         >
     <SeekBar
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/musicProgress"
+        android:layout_weight="0.95"
          />
+        <TextView
+            android:id="@+id/song_progress_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.05"
+            android:text="" />
     </LinearLayout>
 
     <ListView

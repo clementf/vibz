@@ -33,4 +33,13 @@ public class Song {
         return this.duration;
     }
 
+    public String getStringDuration(){
+        String seconds = String.valueOf((this.getDuration()  % 60000) / 1000);
+        String minutes = String.valueOf(this.getDuration() / 60000);
+        String stringDuration = minutes + ":" + seconds;
+        return stringDuration;
+    }
+
+
+
 }

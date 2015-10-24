@@ -67,9 +67,8 @@ public class SongAdapter extends BaseAdapter {
 
         songView.setText(currSong.getTitle());
         artistView.setText(currSong.getArtist());
-        String seconds = String.valueOf((currSong.getDuration()  % 60000) / 1000);
-        String minutes = String.valueOf(currSong.getDuration() / 60000);
-        songDuration.setText(minutes+ ":" + seconds);
+
+        songDuration.setText(currSong.getStringDuration());
 
         songLay.setOnClickListener(new View.OnClickListener() {
             @Override
