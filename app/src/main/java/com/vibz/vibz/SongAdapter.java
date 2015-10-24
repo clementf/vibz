@@ -23,7 +23,7 @@ public class SongAdapter extends BaseAdapter {
     private ArrayList<Song> songs = new ArrayList<>();
     private LayoutInflater songInf;
     private Context context;
-    private int showedButton = 0;
+    private int showedButton = -1;
 
 
     public SongAdapter(Context c, ArrayList<Song> theSongs) {

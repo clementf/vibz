@@ -5,7 +5,10 @@
     android:background="#FFF9F9F9"
     android:orientation="vertical"
     tools:context=".chooseActivity">
-
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar">
+    </include>
     <ListView
         android:id="@+id/song_list"
         android:layout_width="fill_parent"

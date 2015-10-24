@@ -182,16 +182,5 @@ public class ListCategoryActivity extends AppCompatActivity {
     /**
      * Selection of an item in the menu
      */
-    /*@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_home:
-                Intent intent = new Intent(this, MenuActivity.class);
-                startActivity(intent);
-                break;
-            default:
-                break;
-        }
-        return true;
-    }*/
+
 }
