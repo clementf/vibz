@@ -14,7 +14,7 @@
             android:name=".MenuActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,6 +23,8 @@
         </activity>
 
         <service android:name=".MusicService" />
+
+
 
         <activity
             android:name=".ChooseCategoryActivity"
@@ -34,6 +36,17 @@
             android:name=".SearchActivity"
             android:label="@string/title_activity_search" >
         </activity>
+
+
+        <receiver android:name=".NotificationBroadcast" >
+            <intent-filter>
+                <action android:name="com.vibz.vibz.previous"/>
+                <action android:name="com.vibz.vibz.delete" />
+                <action android:name="com.vibz.vibz.pause" />
+                <action android:name="com.vibz.vibz.next" />
+                <action android:name="com.vibz.vibz.play" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
