@@ -18,13 +18,10 @@ import java.util.ArrayList;
  */
 public class SongAdapter extends BaseAdapter {
 
-    //Declarations
-
     private ArrayList<Song> songs = new ArrayList<>();
     private LayoutInflater songInf;
     private Context context;
     private int showedButton = -1;
-
 
     public SongAdapter(Context c, ArrayList<Song> theSongs) {
         this.context = c;
@@ -47,14 +44,7 @@ public class SongAdapter extends BaseAdapter {
         return 0;
     }
 
-    /**
-     * Add the content for each row of the list (Song and artist's names)
-     *
-     * @param position
-     * @param convertView
-     * @param parent
-     * @return
-     */
+
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         final String whereWeAre = context.getClass().getSimpleName();
@@ -69,15 +59,10 @@ public class SongAdapter extends BaseAdapter {
         artistView.setText(currSong.getArtist());
         songDuration.setText(currSong.getStringDuration());
 
-
         final Button buttonAddRemove = (Button) songLay.findViewById(R.id.button_add_remove);
+        if(whereWeAre.equals("ChooseCategoryActivity") || whereWeAre.equals("SearchActivity")) buttonAddRemove.setText("+");
+        else if (whereWeAre.equals("MenuActivity")) buttonAddRemove.setText("-");
 
-        if(whereWeAre.equals("ChooseCategoryActivity") || whereWeAre.equals("SearchActivity")) {
-            buttonAddRemove.setText("+");
-        }
-        else if (whereWeAre.equals("MenuActivity")){
-            buttonAddRemove.setText("-");
-        }
         if(showedButton != position)
             buttonAddRemove.setVisibility(View.INVISIBLE);
 
@@ -87,10 +72,13 @@ public class SongAdapter extends BaseAdapter {
             public void onClick(View v) {
                 //Get the name of the current activity
                 if (whereWeAre.equals("ChooseCategoryActivity") || whereWeAre.equals("SearchActivity")) {
-                    MusicService.PlaylistSongs.add(currSong);
                     if (MusicService.isPlaying == false) {
+                        MusicService.CurrentSong.add(currSong);
                         MenuActivity.musicSrv.onFirstPlay();
                         MusicService.isPlaying = true;
+                    }
+                    else {
+                        MusicService.PlaylistSongs.add(currSong);
                     }
                     int duration = Toast.LENGTH_SHORT;
                     Toast toast = Toast.makeText(context, currSong.getTitle() + " added to the playlist", duration);
@@ -112,7 +100,7 @@ public class SongAdapter extends BaseAdapter {
         songLay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(position>0 || !whereWeAre.equals("MenuActivity")){
+                if(position > 0 || !whereWeAre.equals("MenuActivity")){
                     buttonAddRemove.setVisibility(View.VISIBLE);
                     showedButton = position;
                     notifyDataSetChanged();

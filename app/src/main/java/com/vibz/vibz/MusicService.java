@@ -30,13 +30,12 @@ public class MusicService extends Service implements
 
     private final IBinder musicBind = new MusicBinder();
     private MediaPlayer player;
-    public static ArrayList<Song> PlaylistSongs = new ArrayList<Song>();
+    public static ArrayList<Song> CurrentSong = new ArrayList<>();;
+    public static ArrayList<Song> PlaylistSongs = new ArrayList<>();
     public static boolean isPlaying = false;
     public static boolean firstPlay = false;
-    private int songPosition;
+    public int songPosition;
 
-    public static final String NOTIFY_PREVIOUS = "com.vibz.vibz.previous";
-    public static final String NOTIFY_DELETE = "com.vibz.vibz.delete";
     public static final String NOTIFY_PAUSE = "com.vibz.vibz.pause";
     public static final String NOTIFY_PLAY = "com.vibz.vibz.play";
     public static final String NOTIFY_NEXT = "com.vibz.vibz.next";
@@ -49,7 +48,6 @@ public class MusicService extends Service implements
         initMusicPlayer();
     }
 
-
     public void initMusicPlayer() {
         this.player.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
         this.player.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -58,21 +56,15 @@ public class MusicService extends Service implements
         this.player.setOnErrorListener(this);
     }
 
-
     public void setList(ArrayList<Song> theSongs) {
-        this.PlaylistSongs = theSongs;
+        this.CurrentSong = theSongs;
     }
 
-    /**
-     * Play the current song based on the position (index) of the playlist
-     */
     public void playSong() {
         player.reset();
-        Song playedSong = this.PlaylistSongs.get(this.songPosition);
-        long currentSong = playedSong.getID();
+        long currentSongID = CurrentSong.get(0).getID();
         customSimpleNotification(this.getApplicationContext());
-        Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, currentSong);
-        Log.d("clem", "uri is : " + trackUri);
+        Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, currentSongID);
         try {
             player.setDataSource(getApplicationContext(), trackUri);
         } catch (Exception e) {
@@ -81,15 +73,9 @@ public class MusicService extends Service implements
         player.prepareAsync();
     }
 
-    /**
-     * Set the index of the playlist (Usefull for "nextSong" functionnality)
-     *
-     * @param songIndex
-     */
     public void setSong(int songIndex) {
         this.songPosition = songIndex;
     }
-
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -129,21 +115,23 @@ public class MusicService extends Service implements
     }
 
     public void nextSong(){
-        if(PlaylistSongs.size() > 1){
+        if(PlaylistSongs.size() > 0){
+            CurrentSong.remove(0);
+            CurrentSong.add(PlaylistSongs.get(0));
             PlaylistSongs.remove(0);
-            MenuActivity.seek_bar.setMax((int) MusicService.PlaylistSongs.get(0).getDuration());
-            MenuActivity.songAdt.notifyDataSetChanged();
             this.setSong(0);
             this.playSong();
+
         }
     }
+
     @Override
     public void onCompletion(MediaPlayer mp) {
         //On supprime la dernière musique que si il y en a encore
-        if(PlaylistSongs.size() > 1){
+        if(PlaylistSongs.size() > 0){
+            CurrentSong.add(PlaylistSongs.get(0));
+            CurrentSong.remove(0);
             PlaylistSongs.remove(0);
-            MenuActivity.seek_bar.setMax((int) MusicService.PlaylistSongs.get(0).getDuration());
-            MenuActivity.songAdt.notifyDataSetChanged();
             Intent intent = new Intent("musicCompletion");
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         }
@@ -176,8 +164,8 @@ public class MusicService extends Service implements
                 .setContentTitle("Custom Big View").build();
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
         notification.contentView = simpleView;
-        notification.contentView.setTextViewText(R.id.textSongName, PlaylistSongs.get(0).getTitle());
-        notification.contentView.setTextViewText(R.id.textAlbumName, PlaylistSongs.get(0).getArtist());
+        notification.contentView.setTextViewText(R.id.textSongName, CurrentSong.get(0).getTitle());
+        notification.contentView.setTextViewText(R.id.textAlbumName, CurrentSong.get(0).getArtist());
 
         setListeners(simpleView, context);
 

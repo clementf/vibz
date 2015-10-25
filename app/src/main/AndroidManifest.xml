@@ -22,10 +22,12 @@
         android:allowBackup="true"
         android:icon="@mipmap/vibz"
         android:label="@string/app_name"
+        android:titleTextStyle="@color/blue_text"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
             android:name=".MenuActivity"
             android:label="@string/app_name"
+            android:titleTextStyle="@color/blue_text"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -41,16 +43,20 @@
         <activity
             android:name=".ChooseCategoryActivity"
             android:label="Vibz - Choose your song"
+            android:titleTextStyle="@color/blue_text"
             />
         <activity
             android:name=".ListCategoryActivity"
             android:label="Vibz - Choose your song" />
+        android:titleTextStyle="@color/blue_text"
         <activity
             android:name=".SearchActivity"
+            android:titleTextStyle="@color/blue_text"
             android:label="@string/title_activity_search"></activity>
         <activity
             android:name=".WiFiDirectActivity"
             android:label="@string/app_name"
+            android:titleTextStyle="@color/blue_text"
             android:launchMode="singleTask">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />

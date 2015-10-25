@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 public class SearchActivity extends AppCompatActivity {
 
+    //TODO ADD AutoCompletion Search
     private String search;
     private ArrayList listSongs = new ArrayList<Song>();
     @Override
