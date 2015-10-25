@@ -144,6 +144,8 @@ public class MusicService extends Service implements
             PlaylistSongs.remove(0);
             MenuActivity.seek_bar.setMax((int) MusicService.PlaylistSongs.get(0).getDuration());
             MenuActivity.songAdt.notifyDataSetChanged();
+            Intent intent = new Intent("musicCompletion");
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         }
         this.setSong(0);
         this.playSong();

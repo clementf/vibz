@@ -1,13 +1,16 @@
 package com.vibz.vibz;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -26,6 +29,14 @@ public class MenuActivity extends AppCompatActivity {
     private WifiP2pManager manager;
     private boolean isWifiP2pEnabled = false;
     private boolean retryChannel = false;
+    private BroadcastReceiver onCompletionListener = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d("The_best", "La musique est finie");
+            addFirstSong();
+        }
+
+    };
 
 
 
@@ -63,6 +74,7 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         android.util.Log.d("The_best", "Let's debug this shit nigga");
+
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.menu);
         refreshPlaylist();
@@ -84,7 +96,18 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        LocalBroadcastManager.getInstance(this).registerReceiver(onCompletionListener,
+                new IntentFilter("musicCompletion"));
         addFirstSong();
+        TextView menuTitle = (TextView)findViewById(R.id.menuTitle);
+        if(MusicService.PlaylistSongs.size()==0){
+            menuTitle.setText("TO START, ADD A SONG TO SHOW YOUR VIBZ!");
+            menuTitle.setTextSize(20);
+        }
+        else{
+            menuTitle.setText("");
+            menuTitle.setVisibility(View.GONE);
+        }
         refreshPlaylist();
         seek_bar = (SeekBar) findViewById(R.id.musicProgress);
         song_progress_text = (TextView) findViewById(R.id.song_progress_text);
@@ -174,6 +197,13 @@ public class MenuActivity extends AppCompatActivity {
             Button p = (Button)findViewById(R.id.pause_play_song);
             p.setText("| |");
         }
+    }
+
+    @Override
+    protected void onPause() {
+        // Unregister since the activity is not visible
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onCompletionListener);
+        super.onPause();
     }
 
     public void onNextSong(View view){

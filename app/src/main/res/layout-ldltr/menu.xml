@@ -114,6 +114,14 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/menuTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text=""
+        android:layout_margin="10dp"
+        android:textColor="@color/blue_text"/>
     <ListView
         android:id="@+id/playlist"
         android:layout_width="fill_parent"
