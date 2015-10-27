@@ -76,6 +76,7 @@ public class SongAdapter extends BaseAdapter {
                         MusicService.CurrentSong.add(currSong);
                         MenuActivity.musicSrv.onFirstPlay();
                         MusicService.firstPlay = true;
+                        MusicService.isPlaying = true;
                     }
                     else {
                         MusicService.PlaylistSongs.add(currSong);
