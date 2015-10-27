@@ -200,11 +200,14 @@ public class MenuActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onCompletionListener);
         super.onPause();
     }
+
     public void onNextSong(View view){
-        musicSrv.nextSong();
-        seek_bar.setMax((int) MusicService.CurrentSong.get(0).getDuration());
-        songAdt.notifyDataSetChanged();
-        addFirstSong();
+        if(MusicService.CurrentSong.size()>0) {
+            musicSrv.nextSong();
+            seek_bar.setMax((int) MusicService.CurrentSong.get(0).getDuration());
+            songAdt.notifyDataSetChanged();
+            addFirstSong();
+        }
     }
 
     //Useful method

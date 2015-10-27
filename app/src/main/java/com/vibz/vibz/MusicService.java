@@ -160,7 +160,7 @@ public class MusicService extends Service implements
         RemoteViews simpleView = new RemoteViews(context.getPackageName(), R.layout.custom_notification);
 
         Notification notification = new NotificationCompat.Builder(context)
-                .setSmallIcon(R.drawable.ic_home)
+                .setSmallIcon(R.mipmap.vibz)
                 .setContentTitle("Custom Big View").build();
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
         notification.contentView = simpleView;

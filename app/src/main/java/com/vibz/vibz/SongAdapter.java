@@ -72,10 +72,10 @@ public class SongAdapter extends BaseAdapter {
             public void onClick(View v) {
                 //Get the name of the current activity
                 if (whereWeAre.equals("ChooseCategoryActivity") || whereWeAre.equals("SearchActivity")) {
-                    if (MusicService.isPlaying == false) {
+                    if (MusicService.firstPlay == false) {
                         MusicService.CurrentSong.add(currSong);
                         MenuActivity.musicSrv.onFirstPlay();
-                        MusicService.isPlaying = true;
+                        MusicService.firstPlay = true;
                     }
                     else {
                         MusicService.PlaylistSongs.add(currSong);

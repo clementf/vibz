@@ -47,8 +47,8 @@
             />
         <activity
             android:name=".ListCategoryActivity"
-            android:label="Vibz - Choose your song" />
-        android:titleTextStyle="@color/blue_text"
+            android:label="Vibz - Choose your song"
+            android:titleTextStyle="@color/blue_text"/>
         <activity
             android:name=".SearchActivity"
             android:titleTextStyle="@color/blue_text"
