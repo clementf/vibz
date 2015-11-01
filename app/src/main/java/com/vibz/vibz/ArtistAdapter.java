@@ -13,22 +13,20 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 /**
- * Created by clement on 06/10/2015.
- * Adapter made to display a item list in a Listview (Can be an artist, album or genre)
+ * Created by hugo on 31/10/2015.
+ * Adapter made to display a Artist list in a Listview
  */
-public class ItemAdapter extends BaseAdapter {
+public class ArtistAdapter extends BaseAdapter {
 
     //Declarations
 
     private ArrayList<String> items = new ArrayList<>();
     private LayoutInflater songInf;
-    private String typeView;
     private Context context;
 
-    public ItemAdapter(Context c, ArrayList<String> theItems, String type) {
+    public ArtistAdapter(Context c, ArrayList<String> theItems) {
         this.items = theItems;
         this.context = c;
-        this.typeView = type;
         this.songInf = LayoutInflater.from(c);
     }
 
@@ -59,14 +57,11 @@ public class ItemAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         //map to song layout
         LinearLayout itemLay = (LinearLayout) songInf.inflate
-                (R.layout.artist_album_genre, parent, false);
+                (R.layout.artist, parent, false);
         //get title and artist views
-        TextView itemView = (TextView) itemLay.findViewById(R.id.item_title);
+        TextView itemView = (TextView) itemLay.findViewById(R.id.artist_title);
         //get item
-        if (typeView.equals("album"))
-            itemView.setText(MusicAccess.getAlbumById(this.context, Integer.parseInt(items.get(position))));
-        if (typeView.equals("artist"))
-            itemView.setText(MusicAccess.getArtistById(this.context, Integer.parseInt(items.get(position))));
+        itemView.setText(MusicAccess.getArtistById(this.context, Integer.parseInt(items.get(position))));
         final String itemName = items.get(position).toString();
         //set position as tag
         itemLay.setTag(position);
@@ -74,30 +69,20 @@ public class ItemAdapter extends BaseAdapter {
         //Set on click listener, to launch new activity
         itemView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String type = ItemAdapter.this.typeView;
                 String nextType = "";
                 String selection = "";
 
-                if (type.equals("artist")) {
-                    nextType = "album";
-                    //Restriction by artist
-                    selection = MediaStore.Audio.Media.ARTIST_ID + " = '" + itemName + "'";
-                }
-
-                if (type.equals("album")) {
-                    nextType = "song";
-                    //Restriction by artist, and album
-                    selection = MediaStore.Audio.Media.ALBUM_ID + " = '" + itemName + "'";
-                }
+                nextType = "album";
+                //Restriction by artist
+                selection = MediaStore.Audio.Media.ARTIST_ID + " = '" + itemName + "'";
 
                 //TODO : handle errors
-                Intent intent = new Intent(ItemAdapter.this.context, ChooseCategoryActivity.class);
+                Intent intent = new Intent(ArtistAdapter.this.context, ChooseCategoryActivity.class);
                 intent.putExtra("selection", selection);
                 intent.putExtra("type", nextType);
-                ItemAdapter.this.context.startActivity(intent);
+                ArtistAdapter.this.context.startActivity(intent);
             }
         });
-
         return itemLay;
     }
 

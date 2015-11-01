@@ -2,7 +2,6 @@ package com.vibz.vibz;
 
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentUris;
 import android.content.Context;
@@ -14,8 +13,6 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.v7.app.NotificationCompat;
-import android.util.Log;
-import android.view.Menu;
 import android.widget.RemoteViews;
 
 import java.util.ArrayList;

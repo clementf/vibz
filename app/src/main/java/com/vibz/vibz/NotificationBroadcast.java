@@ -1,14 +1,8 @@
 package com.vibz.vibz;
 
-import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.os.IBinder;
-import android.util.Log;
-import android.widget.Toast;
 
 public class NotificationBroadcast extends BroadcastReceiver {
     public static final String NOTIFY_PAUSE = "com.vibz.vibz.pause";

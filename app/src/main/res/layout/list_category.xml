@@ -1,54 +1,87 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
     android:background="@color/black_100_opacity"
-    android:padding="0dp">
+    android:orientation="vertical"
+    android:padding="0dp"
+    android:weightSum="1">
+
     <include
         android:id="@+id/toolbar"
-        layout="@layout/toolbar">
-    </include>
+        layout="@layout/toolbar"></include>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.2" />
 
     <TextView
         android:id="@+id/choose_by_artist"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_weight="0.1"
+        android:background="@drawable/button_shape"
+        android:clickable="true"
+        android:gravity="center_horizontal|center_vertical"
         android:onClick="chooseByArtist"
         android:padding="10dp"
-        android:text="Artistes"
+        android:text="Artists"
         android:textAllCaps="true"
-        android:textColor="#FF1C7CCE"
+        android:textColor="@color/white_50_opacity"
         android:textSize="20sp"
-        android:textStyle="bold"
-        android:clickable="true"
-        />
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1" />
 
     <TextView
         android:id="@+id/choose_by_album"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_weight="0.1"
+        android:background="@drawable/button_shape"
+        android:clickable="true"
+        android:gravity="center_horizontal|center_vertical"
         android:onClick="chooseByAlbum"
         android:padding="10dp"
         android:text="Albums"
         android:textAllCaps="true"
-        android:textColor="#FF1C7CCE"
+        android:textColor="@color/white_50_opacity"
         android:textSize="20sp"
-        android:textStyle="bold"
-        android:clickable="true"
-        />
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1" />
 
     <TextView
         android:id="@+id/all_song"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_weight="0.1"
+        android:background="@drawable/button_shape"
+        android:clickable="true"
+        android:gravity="center_horizontal|center_vertical"
         android:onClick="chooseBySong"
         android:padding="10dp"
-        android:text="Musiques"
+        android:text="Songs"
         android:textAllCaps="true"
-        android:textColor="#FF1C7CCE"
+        android:textColor="@color/white_50_opacity"
         android:textSize="20sp"
-        android:textStyle="bold"
-        android:clickable="true"
-        />
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.3" />
 
 </LinearLayout>
