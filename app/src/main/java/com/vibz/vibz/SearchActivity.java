@@ -119,7 +119,7 @@ public class SearchActivity extends AppCompatActivity {
         swipelistview.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_REVEAL); //there are four swipe actions
         swipelistview.setOffsetLeft(convertDpToPixel(510f)); // left side offset
         swipelistview.setAnimationTime(200); // animarion time
-        swipelistview.setSwipeOpenOnLongPress(false); // enable or disable SwipeOpenOnLongPress
+        swipelistview.setSwipeOpenOnLongPress(true); // enable or disable SwipeOpenOnLongPress
 
         swipelistview.setAdapter(adapter);
 

@@ -121,6 +121,12 @@ public class MenuActivity extends AppCompatActivity {
 
             @Override
             public void onClickFrontView(int position) {
+                Log.d("swipe", String.format("onClickFrontView %d", position));
+                if (lastPosition != -1) {
+                    swipelistview.closeAnimate(lastPosition);
+                }
+                swipelistview.openAnimate(position); //when you touch front view it will open
+                lastPosition = position;
             }
 
             @Override
@@ -141,12 +147,10 @@ public class MenuActivity extends AppCompatActivity {
         //These are the swipe listview settings. you can change these
         //setting as your requrement
         swipelistview.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_REVEAL); //there are four swipe actions
-        swipelistview.setOffsetLeft(convertDpToPixel(510f)); // left side offset
-        swipelistview.setSwipeMode(SwipeListView.SWIPE_MODE_BOTH); // there are five swiping modes
-        swipelistview.setSwipeActionRight(SwipeListView.SWIPE_ACTION_REVEAL); //there are four swipe actions
-        swipelistview.setOffsetRight(convertDpToPixel(510f)); // left side offset
+        swipelistview.setOffsetLeft(convertDpToPixel(400f)); // left side offset
+        swipelistview.setSwipeMode(SwipeListView.SWIPE_MODE_LEFT); // there are five swiping modes
         swipelistview.setAnimationTime(200); // animarion time
-        swipelistview.setSwipeOpenOnLongPress(false); // enable or disable SwipeOpenOnLongPress
+        swipelistview.setSwipeOpenOnLongPress(true); // enable or disable SwipeOpenOnLongPress
         swipelistview.setAdapter(adapter);
 
         adapter.notifyDataSetChanged();

@@ -84,9 +84,11 @@ public class SongAdapter extends ArrayAdapter {
         if (whereWeAre.equals("ChooseCategoryActivity") || whereWeAre.equals("SearchActivity")) {
             holder.remove_addButton.setText("Add");
             holder.remove_addButton.setBackgroundColor(Color.rgb(108, 142, 72));
+            holder.noteButton.setVisibility(View.GONE);
         } else if (whereWeAre.equals("MenuActivity")) {
             holder.remove_addButton.setText("Remove");
             holder.remove_addButton.setBackgroundColor(Color.rgb(170, 0, 0));
+            holder.noteButton.setVisibility(View.VISIBLE);
         }
         holder.remove_addButton.setVisibility(View.VISIBLE);
         holder.remove_addButton.setOnClickListener(new View.OnClickListener() {
