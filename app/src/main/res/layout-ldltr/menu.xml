@@ -177,6 +177,13 @@
         android:layout_marginTop="10dp"
         android:layout_weight="0.57"
         android:orientation="horizontal">
+        <TextView
+            android:id="@+id/playlistName"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:textColor="@color/white_50_opacity" />
 
         <TextView
             android:id="@+id/menuTitle"
@@ -208,36 +215,12 @@
         android:padding="5dp"
         android:weightSum="1">
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="0.1" />
-
-        <Button
-            android:id="@+id/connection"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="0.3"
-            android:background="@drawable/button_shape"
-            android:clickable="true"
-            android:onClick="CheckConnection"
-            android:padding="10dp"
-            android:text="Connection"
-            android:textAllCaps="true"
-            android:textColor="@color/white_50_opacity"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="0.2" />
 
         <Button
             android:id="@+id/add_song"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
-            android:layout_weight="0.3"
+            android:layout_weight="1"
             android:background="@drawable/button_shape"
             android:clickable="true"
             android:onClick="AddSongButton"

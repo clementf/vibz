@@ -144,8 +144,6 @@ public class MenuActivity extends AppCompatActivity {
 
         });
 
-        //These are the swipe listview settings. you can change these
-        //setting as your requrement
         swipelistview.setSwipeActionLeft(SwipeListView.SWIPE_ACTION_REVEAL); //there are four swipe actions
         swipelistview.setOffsetLeft(convertDpToPixel(400f)); // left side offset
         swipelistview.setSwipeMode(SwipeListView.SWIPE_MODE_LEFT); // there are five swiping modes
@@ -182,6 +180,10 @@ public class MenuActivity extends AppCompatActivity {
         displayVibzMessages();
         refreshPlaylist();
         seekUpdation();
+
+        TextView t = (TextView)findViewById(R.id.playlistName);
+        t.setText(musicSrv.PlaylistName);
+
 
         seek_bar = (SeekBar) findViewById(R.id.musicProgress);
         song_progress_text = (TextView) findViewById(R.id.song_progress_text);
@@ -311,12 +313,6 @@ public class MenuActivity extends AppCompatActivity {
         String minutes = String.valueOf(position / 60000);
         String stringDuration = minutes + ":" + seconds;
         return stringDuration;
-    }
-
-    //2 bottoms buttons functions
-    public void CheckConnection(View view) {
-        Intent intent = new Intent(this, WiFiDirectActivity.class);
-        startActivity(intent);
     }
 
     public void AddSongButton(View view) {

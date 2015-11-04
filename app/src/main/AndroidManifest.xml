@@ -25,7 +25,7 @@
         android:titleTextStyle="@color/blue_text"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
-            android:name=".MenuActivity"
+            android:name=".ConnectionActivity"
             android:label="@string/app_name"
             android:titleTextStyle="@color/blue_text"
             android:launchMode="singleTop"
@@ -54,7 +54,7 @@
             android:titleTextStyle="@color/blue_text"
             android:label="@string/title_activity_search"></activity>
         <activity
-            android:name=".WiFiDirectActivity"
+            android:name=".MenuActivity"
             android:label="@string/app_name"
             android:titleTextStyle="@color/blue_text"
             android:launchMode="singleTask">

@@ -20,6 +20,7 @@ import android.app.ListFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
@@ -38,10 +39,10 @@ import java.util.List;
  * A ListFragment that displays available peers on discovery and requests the
  * parent activity to handle user interaction events
  */
+
 public class DeviceListFragment extends ListFragment implements PeerListListener {
 
-    private List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
-    ProgressDialog progressDialog = null;
+   private List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
     View mContentView = null;
     private WifiP2pDevice device;
 
@@ -57,15 +58,16 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
         return mContentView;
     }
 
-    /**
-     * @return this device
-     */
+
+    public List<WifiP2pDevice> getDevices() {
+        return peers;
+    }
+
     public WifiP2pDevice getDevice() {
         return device;
     }
 
     private static String getDeviceStatus(int deviceStatus) {
-        Log.d(WiFiDirectActivity.TAG, "Peer status :" + deviceStatus);
         switch (deviceStatus) {
             case WifiP2pDevice.AVAILABLE:
                 return "Available";
@@ -106,67 +108,33 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
                         Context.LAYOUT_INFLATER_SERVICE);
                 v = vi.inflate(R.layout.row_devices, null);
             }
-            WifiP2pDevice device = items.get(position);
+            final WifiP2pDevice device = items.get(position);
             if (device != null) {
                 TextView top = (TextView) v.findViewById(R.id.device_name);
-                TextView bottom = (TextView) v.findViewById(R.id.device_details);
                 if (top != null) {
                     top.setText(device.deviceName);
-                }
-                if (bottom != null) {
-                    bottom.setText(getDeviceStatus(device.status));
+                    top.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            Log.d("the_best", "LES DEVICES" + device);
+                        }
+                    });
                 }
             }
             return v;
         }
     }
 
-    /**
-     * Update UI for this device.
-     *
-     * @param device WifiP2pDevice object
-     */
-    public void updateThisDevice(WifiP2pDevice device) {
-        this.device = device;
-        TextView view = (TextView) mContentView.findViewById(R.id.my_name);
-        view.setText(device.deviceName);
-        view = (TextView) mContentView.findViewById(R.id.my_status);
-        view.setText(getDeviceStatus(device.status));
-    }
-
     @Override
     public void onPeersAvailable(WifiP2pDeviceList peerList) {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
         peers.clear();
         peers.addAll(peerList.getDeviceList());
         ((WiFiPeerListAdapter) getListAdapter()).notifyDataSetChanged();
         if (peers.size() == 0) {
-            Log.d(WiFiDirectActivity.TAG, "No devices found");
             return;
         }
     }
 
-    public void clearPeers() {
-        peers.clear();
-        ((WiFiPeerListAdapter) getListAdapter()).notifyDataSetChanged();
     }
-
-    public void onInitiateDiscovery() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-        progressDialog = ProgressDialog.show(getActivity(), "Press back to cancel", "finding peers", true,
-                true, new DialogInterface.OnCancelListener() {
-
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                    }
-                });
-    }
-}
-
 
 
 
