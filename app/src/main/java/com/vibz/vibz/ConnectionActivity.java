@@ -18,16 +18,26 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+
 
 /**
  * Created by nicolasszewe on 3/11/15.
  */
 
 public class ConnectionActivity extends Activity {
-    private WifiP2pManager manager;
-    private WifiP2pManager.Channel channel;
+    private static WifiP2pManager manager;
+    private static WifiP2pManager.Channel channel;
     private BroadcastReceiver receiver = null;
+    public WifiP2pInfo deviceInfo = new WifiP2pInfo();
     private boolean isWifiP2pEnabled = false;
+    private static final int SERVER_PORT = 1030;
+    private ArrayList<InetAddress> clients = new ArrayList<InetAddress>();
 
     public void setIsWifiP2pEnabled(boolean isWifiP2pEnabled) {
         this.isWifiP2pEnabled = isWifiP2pEnabled;
@@ -67,6 +77,7 @@ public class ConnectionActivity extends Activity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     MusicService.PlaylistName = editText.getText().toString();
+                    deviceInfo.isGroupOwner = true;
                     Intent intent = new Intent(ConnectionActivity.this,MenuActivity.class);
                     startActivity(intent);
                     return true;
@@ -76,7 +87,7 @@ public class ConnectionActivity extends Activity {
         });
     }
 
-    public void connect(WifiP2pDevice device) {
+    static public void connect(WifiP2pDevice device) {
         WifiP2pConfig config = new WifiP2pConfig();
         config.deviceAddress = device.deviceAddress;
         config.wps.setup = WpsInfo.PBC;
@@ -95,17 +106,19 @@ public class ConnectionActivity extends Activity {
 
     public void onConnectionInfoAvailable(final WifiP2pInfo info) {
 
-        //IneptAddress groupOwnerAddress = info.groupOwnerAddress.getHostAddress());
+        String groupOwnerAddress = info.groupOwnerAddress.getHostAddress().toString();
 
         // After the group negotiation, we can determine the group owner.
         if (info.groupFormed && info.isGroupOwner) {
-            // Do whatever tasks are specific to the group owner.
-            // One common case is creating a server thread and accepting
-            // incoming connections.
+            Log.d("The Best","Server Starts");
+            startServer();
+
         } else if (info.groupFormed) {
-            // The other device acts as the client. In this case,
-            // you'll want to create a client thread that connects to the group
-            // owner.
+            Socket socket = new Socket();
+            try {
+                Log.d("The Best","Client comes");
+                socket.connect(new InetSocketAddress(groupOwnerAddress, SERVER_PORT));
+            }catch(IOException e){}
         }
     }
 
@@ -125,5 +138,19 @@ public class ConnectionActivity extends Activity {
     public void NamePlaylist(View view){
         findViewById(R.id.playlist_name).setVisibility(view.VISIBLE);
         findViewById(R.id.create_playlist_button).setVisibility(view.INVISIBLE);
+    }
+
+    public void startServer() {
+        clients.clear();
+        // Collect client ip's
+            try
+            {
+                ServerSocket serverSocket = new ServerSocket(SERVER_PORT) ;
+                while(true) {
+                    Socket clientSocket = serverSocket.accept();
+                    clients.add(clientSocket.getInetAddress());
+                    clientSocket.close();
+                }
+            } catch (IOException e){}
     }
 }

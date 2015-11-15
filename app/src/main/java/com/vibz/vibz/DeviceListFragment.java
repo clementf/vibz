@@ -115,7 +115,7 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
                     top.setText(device.deviceName);
                     top.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
-                            Log.d("the_best", "LES DEVICES" + device);
+                            ConnectionActivity.connect(device);
                         }
                     });
                 }
@@ -123,6 +123,8 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
             return v;
         }
     }
+
+
 
     @Override
     public void onPeersAvailable(WifiP2pDeviceList peerList) {
