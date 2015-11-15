@@ -2,41 +2,62 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/black_100_opacity"
+    android:background="@drawable/fond"
     android:orientation="vertical"
-    android:weightSum="100">
+    android:weightSum="1">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/vibz"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_weight="0.1"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="Vibz"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <RelativeLayout
         android:id="@+id/create_playlist"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="40"
-        android:orientation="horizontal" >
-        <Button
+        android:layout_height="0dp"
+        android:layout_weight="0.80"
+        android:orientation="vertical">
+
+        <ImageButton
             android:id="@+id/create_playlist_button"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="50"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_margin="150dp"
+            android:adjustViewBounds="true"
+            android:background="@null"
             android:clickable="true"
             android:onClick="NamePlaylist"
-            android:text="Create your vibz"
-            android:textColor="@color/blue_text" />
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_reate" />
+
         <EditText
             android:id="@+id/playlist_name"
-            android:visibility="invisible"
-            android:layout_weight="50"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/white_50_opacity"
+            android:layout_gravity="center"
             android:inputType="text"
-            android:layout_gravity="center" />
+            android:padding="10dp"
+            android:textColor="@color/white_50_opacity"
+            android:visibility="gone" />
 
-    </LinearLayout>
+    </RelativeLayout>
+
     <LinearLayout
         android:id="@+id/loadingPanel"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center" >
+        android:layout_height="0dp"
+        android:layout_marginTop="30dp"
+        android:layout_weight="0.05"
+        android:gravity="center">
 
         <ProgressBar
             android:layout_width="wrap_content"
@@ -47,16 +68,50 @@
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="70"
-        android:orientation="horizontal">
+        android:layout_height="0dp"
+        android:layout_marginBottom="30dp"
+        android:layout_weight="0.05"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/current_song_text"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="0.1"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="Or join existing playlist :"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/loadingPanel2"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="0.05"
+            android:gravity="center">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true" />
+        </LinearLayout>
 
         <fragment
             android:id="@+id/frag_list"
             class="com.vibz.vibz.DeviceListFragment"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/phone_list_height"
-            android:background="@color/black_100_opacity"></fragment>
+            android:layout_height="0dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_weight="0.85"
+            android:background="@android:color/transparent"
+            android:cacheColorHint="@android:color/transparent"
+            android:gravity="center_vertical|center_horizontal"></fragment>
 
     </LinearLayout>
 

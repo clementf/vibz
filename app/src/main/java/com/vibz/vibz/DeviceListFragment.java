@@ -18,9 +18,12 @@ package com.vibz.vibz;
 
 import android.app.ListFragment;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
@@ -34,6 +37,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+
 
 /**
  * A ListFragment that displays available peers on discovery and requests the
@@ -55,6 +60,7 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mContentView = inflater.inflate(R.layout.device_list, null);
+        mContentView.setBackgroundColor(Color.TRANSPARENT);
         return mContentView;
     }
 
@@ -110,6 +116,9 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
             }
             final WifiP2pDevice device = items.get(position);
             if (device != null) {
+                Intent intent = new Intent("deviceFound");
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+
                 TextView top = (TextView) v.findViewById(R.id.device_name);
                 if (top != null) {
                     top.setText(device.deviceName);

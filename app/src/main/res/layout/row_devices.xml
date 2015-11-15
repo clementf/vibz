@@ -1,30 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
-    android:background="?android:attr/activatedBackgroundIndicator"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical|center_horizontal"
+    android:background="@android:color/transparent"
+    android:cacheColorHint="@android:color/transparent"
+    android:gravity="center_vertical|center_horizontal"
+    android:orientation="horizontal"
     android:padding="6dip">
-    <ImageView
-        android:id="@+id/icon"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_marginRight="2dip"
-        android:icon="@mipmap/vibz" />
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="0dip"
-        android:layout_weight="1"
+
+    <Button
+        android:id="@+id/device_name"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:adjustViewBounds="true"
+        android:cacheColorHint="@android:color/transparent"
+        android:background="@drawable/button_circle"
         android:clickable="true"
-        android:layout_height="fill_parent">
-
-        <Button
-            android:id="@+id/device_name"
-            android:layout_width="fill_parent"
-            android:layout_height="0dip"
-            android:layout_weight="1"
-            android:textColor="@color/blue_text"
-            android:gravity="center_vertical" />
-
-    </LinearLayout>
+        android:gravity="center_vertical|center_horizontal"
+        android:onClick="NamePlaylist"
+        android:scaleType="fitCenter"
+        android:textColor="@color/blue_text" />
 </LinearLayout>

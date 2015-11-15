@@ -1,10 +1,12 @@
 package com.vibz.vibz;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -16,6 +18,9 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -38,6 +43,28 @@ public class ConnectionActivity extends Activity {
     private boolean isWifiP2pEnabled = false;
     private static final int SERVER_PORT = 1030;
     private ArrayList<InetAddress> clients = new ArrayList<InetAddress>();
+    public static Context context;
+
+    private BroadcastReceiver setVisibleDevice = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d("hugo", "Un device trouvé !");
+            View view = getCurrentFocus();
+            View v = findViewById(R.id.linearLayout1);
+            View v2 = findViewById(R.id.create_playlist);
+            View v3 = findViewById(R.id.loadingPanel);
+
+            v.setVisibility(view.VISIBLE);
+            v3.setVisibility(view.GONE);
+            v.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, 0, 0.55f));
+            v2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, 0, 0.30f));
+
+            ImageButton layout = (ImageButton)findViewById(R.id.create_playlist_button);
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)layout.getLayoutParams();
+            params.setMargins(80, 80, 80, 80);
+            layout.setLayoutParams(params);
+        }
+    };
 
     public void setIsWifiP2pEnabled(boolean isWifiP2pEnabled) {
         this.isWifiP2pEnabled = isWifiP2pEnabled;
@@ -47,7 +74,13 @@ public class ConnectionActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        context = getApplicationContext();
         setContentView(R.layout.connectivity);
+
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(setVisibleDevice,
+                new IntentFilter("deviceFound"));
 
         // add necessary intent values to be matched.
 
@@ -78,7 +111,7 @@ public class ConnectionActivity extends Activity {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     MusicService.PlaylistName = editText.getText().toString();
                     deviceInfo.isGroupOwner = true;
-                    Intent intent = new Intent(ConnectionActivity.this,MenuActivity.class);
+                    Intent intent = new Intent(ConnectionActivity.this, MenuActivity.class);
                     startActivity(intent);
                     return true;
                 }
@@ -136,8 +169,12 @@ public class ConnectionActivity extends Activity {
     }
 
     public void NamePlaylist(View view){
+        findViewById(R.id.create_playlist_button).setVisibility(view.GONE);
         findViewById(R.id.playlist_name).setVisibility(view.VISIBLE);
-        findViewById(R.id.create_playlist_button).setVisibility(view.INVISIBLE);
+    }
+
+    static public Context getContext(){
+        return context;
     }
 
     public void startServer() {

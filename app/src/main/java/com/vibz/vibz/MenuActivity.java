@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.wifi.p2p.WifiP2pManager;
@@ -248,6 +249,8 @@ public class MenuActivity extends AppCompatActivity {
 
     public void addFirstSong() {
         if (musicSrv.CurrentSong.size() > 0) {
+//            Set player background to black
+            findViewById(R.id.fondPlayer).setBackgroundColor(Color.BLACK);
             String artist = musicSrv.CurrentSong.get(0).getArtist();
             TextView firstsongView = (TextView) findViewById(R.id.firstsong_title);
             TextView firstartistView = (TextView) findViewById(R.id.firstsong_artist);
