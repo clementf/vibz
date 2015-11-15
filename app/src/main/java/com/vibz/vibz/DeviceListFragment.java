@@ -17,13 +17,10 @@
 package com.vibz.vibz;
 
 import android.app.ListFragment;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,11 +30,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -118,7 +111,6 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
             if (device != null) {
                 TextView top = (TextView) v.findViewById(R.id.device_name);
 
-                //3 AVailable, 0 connected, 1 invited, 2 failed
                 Log.d("the_best","" + "" + device);
 
                 if (top != null) {
@@ -126,7 +118,9 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
                     top.setText(tempName[1]);
                     top.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
-                            ConnectionActivity.connect(device);
+                            //MainActivity.connect(device);
+                            Intent intentMenu = new Intent(getActivity(),PlaylistActivity.class);
+                            startActivity(intentMenu);
                         }
                     });
                 }

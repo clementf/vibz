@@ -30,7 +30,7 @@ import java.util.ArrayList;
  * Created by nicolasszewe on 23/10/15.
  * Modified by hugo on 30/10/2015
  */
-public class MenuActivity extends AppCompatActivity {
+public class PlaylistActivity extends AppCompatActivity {
     SwipeListView swipelistview;
     SongAdapter adapter;
     int lastPosition;
@@ -91,6 +91,8 @@ public class MenuActivity extends AppCompatActivity {
         swipelistview = (SwipeListView) findViewById(R.id.playlist);
         itemSong = new ArrayList<Song>();
         adapter = new SongAdapter(this, R.layout.song, itemSong, swipelistview);
+
+        //MainActivity.onConnectionInfoAvailable();
 
         swipelistview.setSwipeListViewListener(new BaseSwipeListViewListener() {
             @Override
