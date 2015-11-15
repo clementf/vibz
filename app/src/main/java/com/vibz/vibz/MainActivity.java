@@ -35,7 +35,7 @@ import java.util.ArrayList;
  * Created by nicolasszewe on 3/11/15.
  */
 
-public class ConnectionActivity extends Activity {
+public class MainActivity extends Activity {
     private static WifiP2pManager manager;
     private static WifiP2pManager.Channel channel;
     private BroadcastReceiver receiver = null;
@@ -111,7 +111,7 @@ public class ConnectionActivity extends Activity {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     MusicService.PlaylistName = editText.getText().toString();
                     deviceInfo.isGroupOwner = true;
-                    Intent intent = new Intent(ConnectionActivity.this, MenuActivity.class);
+                    Intent intent = new Intent(MainActivity.this, PlaylistActivity.class);
                     startActivity(intent);
                     return true;
                 }

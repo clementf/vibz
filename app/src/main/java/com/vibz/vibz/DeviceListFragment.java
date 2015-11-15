@@ -124,7 +124,7 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
                     top.setText(device.deviceName);
                     top.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
-                            ConnectionActivity.connect(device);
+                            MainActivity.connect(device);
                         }
                     });
                 }
