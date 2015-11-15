@@ -85,7 +85,7 @@ public class SongAdapter extends ArrayAdapter {
             holder.remove_addButton.setText("Add");
             holder.remove_addButton.setBackgroundColor(Color.rgb(108, 142, 72));
             holder.noteButton.setVisibility(View.GONE);
-        } else if (whereWeAre.equals("MenuActivity")) {
+        } else if (whereWeAre.equals("PlaylistActivity")) {
             holder.remove_addButton.setText("Remove");
             holder.remove_addButton.setBackgroundColor(Color.rgb(170, 0, 0));
             holder.noteButton.setVisibility(View.VISIBLE);
@@ -99,7 +99,7 @@ public class SongAdapter extends ArrayAdapter {
                 if (whereWeAre.equals("ChooseCategoryActivity") || whereWeAre.equals("SearchActivity")) {
                     if (MusicService.firstPlay == false) {
                         MusicService.CurrentSong.add(currSong);
-                        MenuActivity.musicSrv.onFirstPlay();
+                        PlaylistActivity.musicSrv.onFirstPlay();
                         MusicService.firstPlay = true;
                         MusicService.isPlaying = true;
                     } else {
@@ -108,10 +108,10 @@ public class SongAdapter extends ArrayAdapter {
                     int duration = Toast.LENGTH_SHORT;
                     Toast toast = Toast.makeText(context, currSong.getTitle() + " added to the playlist", duration);
                     toast.show();
-                } else if (whereWeAre.equals("MenuActivity")) {
+                } else if (whereWeAre.equals("PlaylistActivity")) {
                     if (MusicService.PlaylistSongs.size() > 0) {
                         MusicService.PlaylistSongs.remove(currSong);
-                        MenuActivity.songAdt.notifyDataSetChanged();
+                        PlaylistActivity.songAdt.notifyDataSetChanged();
                         int duration = Toast.LENGTH_SHORT;
                         Toast toast = Toast.makeText(context, currSong.getTitle() + " removed from the playlist", duration);
                         toast.show();

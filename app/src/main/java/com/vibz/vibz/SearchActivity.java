@@ -155,7 +155,7 @@ public class SearchActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.action_home:
-                Intent intent = new Intent(this, MenuActivity.class);
+                Intent intent = new Intent(this, PlaylistActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 return true;

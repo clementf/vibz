@@ -31,7 +31,7 @@ import java.util.ArrayList;
  * Created by nicolasszewe on 23/10/15.
  * Modified by hugo on 30/10/2015
  */
-public class MenuActivity extends AppCompatActivity {
+public class PlaylistActivity extends AppCompatActivity {
     SwipeListView swipelistview;
     SongAdapter adapter;
     int lastPosition;
@@ -48,7 +48,13 @@ public class MenuActivity extends AppCompatActivity {
             addFirstSong();
             seek_bar.setMax((int) musicSrv.CurrentSong.get(0).getDuration());
         }
+    };
 
+    private BroadcastReceiver onNext = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateUI();
+        }
     };
 
 
@@ -92,6 +98,8 @@ public class MenuActivity extends AppCompatActivity {
         swipelistview = (SwipeListView) findViewById(R.id.playlist);
         itemSong = new ArrayList<Song>();
         adapter = new SongAdapter(this, R.layout.song, itemSong, swipelistview);
+
+        //MainActivity.onConnectionInfoAvailable();
 
         swipelistview.setSwipeListViewListener(new BaseSwipeListViewListener() {
             @Override
@@ -175,7 +183,10 @@ public class MenuActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         LocalBroadcastManager.getInstance(this).registerReceiver(onCompletionListener,
-                new IntentFilter("musicCompletion"));
+                new IntentFilter("UpdateName"));
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(onNext,
+                new IntentFilter("player.next"));
 
         addFirstSong();
         displayVibzMessages();
@@ -302,8 +313,12 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public void onNextSong(View view) {
+        musicSrv.nextSong();
+        updateUI();
+    }
+
+    public void updateUI(){
         if (MusicService.CurrentSong.size() > 0) {
-            musicSrv.nextSong();
             seek_bar.setMax((int) MusicService.CurrentSong.get(0).getDuration());
             songAdt.notifyDataSetChanged();
             addFirstSong();
