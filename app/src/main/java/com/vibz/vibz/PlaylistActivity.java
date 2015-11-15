@@ -47,7 +47,13 @@ public class PlaylistActivity extends AppCompatActivity {
             addFirstSong();
             seek_bar.setMax((int) musicSrv.CurrentSong.get(0).getDuration());
         }
+    };
 
+    private BroadcastReceiver onNext = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateUI();
+        }
     };
 
 
@@ -178,6 +184,9 @@ public class PlaylistActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(onCompletionListener,
                 new IntentFilter("UpdateName"));
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(onNext,
+                new IntentFilter("player.next"));
+
         addFirstSong();
         displayVibzMessages();
         refreshPlaylist();
@@ -301,8 +310,12 @@ public class PlaylistActivity extends AppCompatActivity {
     }
 
     public void onNextSong(View view) {
+        musicSrv.nextSong();
+        updateUI();
+    }
+
+    public void updateUI(){
         if (MusicService.CurrentSong.size() > 0) {
-            musicSrv.nextSong();
             seek_bar.setMax((int) MusicService.CurrentSong.get(0).getDuration());
             songAdt.notifyDataSetChanged();
             addFirstSong();
