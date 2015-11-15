@@ -19,12 +19,15 @@ package com.vibz.vibz;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 import android.util.Log;
+
+import java.lang.reflect.Method;
 
 /**
  * A BroadcastReceiver that notifies of important wifi p2p events.
@@ -34,6 +37,23 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     private WifiP2pManager manager;
     private Channel channel;
     private ConnectionActivity activity;
+
+    private BroadcastReceiver setDeviceName = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try {
+                String name = intent.getStringExtra("Playlist");
+                Method method = manager.getClass().getMethod("setDeviceName",
+                        WifiP2pManager.Channel.class, String.class, WifiP2pManager.ActionListener.class);
+
+                method.invoke(manager, channel, name, new WifiP2pManager.ActionListener() {
+                    public void onSuccess() {}
+
+                    public void onFailure(int reason) {}
+                });
+            } catch (Exception e)   {}
+        }
+    };
 
     /**
      * @param manager  WifiP2pManager system service
@@ -46,6 +66,8 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         this.manager = manager;
         this.channel = channel;
         this.activity = activity;
+        LocalBroadcastManager.getInstance(this.activity).registerReceiver(setDeviceName,
+                new IntentFilter("updateName"));
     }
 
     @Override
@@ -89,9 +111,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             }
             Log.d("the_best", "" + "connection changed action");
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
-            Log.d("the_best", "" + "Device changed action");
         }
     }
-
-
 }

@@ -174,7 +174,7 @@ public class MenuActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         LocalBroadcastManager.getInstance(this).registerReceiver(onCompletionListener,
-                new IntentFilter("musicCompletion"));
+                new IntentFilter("UpdateName"));
 
         addFirstSong();
         displayVibzMessages();

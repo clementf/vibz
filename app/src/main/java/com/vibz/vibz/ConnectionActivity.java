@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -34,7 +35,6 @@ public class ConnectionActivity extends Activity {
     private static WifiP2pManager manager;
     private static WifiP2pManager.Channel channel;
     private BroadcastReceiver receiver = null;
-    public WifiP2pInfo deviceInfo = new WifiP2pInfo();
     private boolean isWifiP2pEnabled = false;
     private static final int SERVER_PORT = 1030;
     private ArrayList<InetAddress> clients = new ArrayList<InetAddress>();
@@ -77,9 +77,12 @@ public class ConnectionActivity extends Activity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     MusicService.PlaylistName = editText.getText().toString();
-                    deviceInfo.isGroupOwner = true;
-                    Intent intent = new Intent(ConnectionActivity.this,MenuActivity.class);
-                    startActivity(intent);
+                    Intent intent = new Intent("updateName");
+                    intent.putExtra("Playlist", "PlayListName$*:" + MusicService.PlaylistName);
+                    LocalBroadcastManager.getInstance(ConnectionActivity.this).sendBroadcast(intent);
+
+                    Intent intent2 = new Intent(ConnectionActivity.this,MenuActivity.class);
+                    startActivity(intent2);
                     return true;
                 }
                 return false;
