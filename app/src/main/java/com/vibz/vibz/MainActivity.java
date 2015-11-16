@@ -20,14 +20,10 @@ import android.widget.TextView;
  */
 
 public class MainActivity extends Activity {
-    private static WifiP2pManager manager;
-    private static WifiP2pManager.Channel channel;
+    public static WifiP2pManager manager;
+    public static WifiP2pManager.Channel channel;
     private BroadcastReceiver receiver = null;
-    private boolean isWifiP2pEnabled = false;
 
-    public void setIsWifiP2pEnabled(boolean isWifiP2pEnabled) {
-        this.isWifiP2pEnabled = isWifiP2pEnabled;
-    }
     private final IntentFilter intentFilter = new IntentFilter();
 
     @Override
@@ -35,6 +31,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.connectivity);
 
+        DataTransferService dataService = new DataTransferService(this);
         // add necessary intent values to be matched.
 
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);

@@ -37,8 +37,8 @@ public class PlaylistActivity extends AppCompatActivity {
     ArrayList<Song> itemSong;
     public static final String TAG = "wifidirectdemo";
     private WifiP2pManager manager;
+    public static WifiP2pManager.Channel channel;
     private boolean isWifiP2pEnabled = false;
-    private boolean retryChannel = false;
     private BroadcastReceiver onCompletionListener = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -64,9 +64,11 @@ public class PlaylistActivity extends AppCompatActivity {
     private ListView itemView;
     private boolean musicBound = false;
     public static SeekBar seek_bar;
+    private BroadcastReceiver receiver = null;
     private Handler seekHandler = new Handler();
     private TextView song_progress_text;
     private TextView current_song_text;
+    private final IntentFilter intentFilter = new IntentFilter();
     private ServiceConnection musicConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -87,6 +89,13 @@ public class PlaylistActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.menu);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+
+        receiver = new WiFiDirectBroadcastReceiver(manager, channel,this);
+        registerReceiver(receiver, intentFilter);
 
         swipelistview = (SwipeListView) findViewById(R.id.playlist);
         itemSong = new ArrayList<Song>();
