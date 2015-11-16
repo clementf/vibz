@@ -2,10 +2,13 @@ package com.vibz.vibz;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -13,6 +16,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.v7.app.NotificationCompat;
+import android.view.View;
 import android.widget.RemoteViews;
 
 import java.util.ArrayList;
@@ -44,6 +48,13 @@ public class MusicService extends Service implements
         this.songPosition = 0;
         this.player = new MediaPlayer();
         initMusicPlayer();
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(onPause,
+                new IntentFilter("player.pause"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(onPlay,
+                new IntentFilter("player.play"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(onNext,
+                new IntentFilter("player.next"));
     }
 
     public void initMusicPlayer() {
@@ -61,7 +72,6 @@ public class MusicService extends Service implements
     public void playSong() {
         player.reset();
         long currentSongID = CurrentSong.get(0).getID();
-        customSimpleNotification(this.getApplicationContext());
         Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, currentSongID);
         try {
             player.setDataSource(getApplicationContext(), trackUri);
@@ -69,6 +79,8 @@ public class MusicService extends Service implements
             android.util.Log.e("MUSIC SERVICE", "Error setting data source", e);
         }
         player.prepareAsync();
+        this.isPlaying = true;
+        customSimpleNotification(this.getApplicationContext());
     }
 
     public void setSong(int songIndex) {
@@ -96,6 +108,8 @@ public class MusicService extends Service implements
 
     public void pauseSong(){
         player.pause();
+        this.isPlaying = false;
+        customSimpleNotification(this.getApplicationContext());
     }
 
     public int getPosn(){
@@ -105,6 +119,8 @@ public class MusicService extends Service implements
     public void playSongAgain(){
         player.seekTo(getPosn());
         player.start();
+        this.isPlaying = true;
+        customSimpleNotification(this.getApplicationContext());
     }
 
     public void playSongAgain(int position){
@@ -153,9 +169,38 @@ public class MusicService extends Service implements
         }
     }
 
+    private BroadcastReceiver onPause =  new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            pauseSong();
+        }
+    };
+
+    private BroadcastReceiver onPlay =  new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            playSongAgain();
+        }
+    };
+
+    private BroadcastReceiver onNext =  new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+                nextSong();
+        }
+    };
+
 
     public static void customSimpleNotification(Context context) {
         RemoteViews simpleView = new RemoteViews(context.getPackageName(), R.layout.custom_notification);
+        if(isPlaying){
+            simpleView.setViewVisibility(R.id.btnPause, View.VISIBLE);
+            simpleView.setViewVisibility(R.id.btnPlay, View.GONE);
+        }
+        else {
+            simpleView.setViewVisibility(R.id.btnPause, View.GONE);
+            simpleView.setViewVisibility(R.id.btnPlay, View.VISIBLE);
+        }
 
         Notification notification = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.mipmap.vibz)
@@ -178,13 +223,13 @@ public class MusicService extends Service implements
         Intent next = new Intent(NOTIFY_NEXT);
         Intent play = new Intent(NOTIFY_PLAY);
 
-        /*PendingIntent pPause = PendingIntent.getBroadcast(context, 0, pause, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pPause = PendingIntent.getBroadcast(context, 0, pause, PendingIntent.FLAG_UPDATE_CURRENT);
         view.setOnClickPendingIntent(R.id.btnPause, pPause);
 
         PendingIntent pNext = PendingIntent.getBroadcast(context, 0, next, PendingIntent.FLAG_UPDATE_CURRENT);
         view.setOnClickPendingIntent(R.id.btnNext, pNext);
 
         PendingIntent pPlay = PendingIntent.getBroadcast(context, 0, play, PendingIntent.FLAG_UPDATE_CURRENT);
-        view.setOnClickPendingIntent(R.id.btnPlay, pPlay);*/
+        view.setOnClickPendingIntent(R.id.btnPlay, pPlay);
     }
 }
