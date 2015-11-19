@@ -40,8 +40,8 @@ import java.util.ArrayList;
  */
 
 public class MainActivity extends Activity {
-    private static WifiP2pManager manager;
-    private static WifiP2pManager.Channel channel;
+    public static WifiP2pManager manager;
+    public static WifiP2pManager.Channel channel;
     private BroadcastReceiver receiver = null;
     public WifiP2pInfo deviceInfo = new WifiP2pInfo();
     private boolean isWifiP2pEnabled = false;
