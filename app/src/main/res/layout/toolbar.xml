@@ -5,6 +5,6 @@
     android:layout_height="wrap_content"
     android:elevation="4dp"
     android:textColor="#FF1C7CCE"
-    android:background="@color/black_100_opacity">
+    android:background="@drawable/item_font3">
 
 </android.support.v7.widget.Toolbar>

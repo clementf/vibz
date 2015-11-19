@@ -20,6 +20,26 @@
         android:textStyle="bold" />
 
     <RelativeLayout
+        android:id="@+id/Image_create"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.70"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/Image_create_img"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_margin="150dp"
+            android:adjustViewBounds="true"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_reate2" />
+    </RelativeLayout>
+
+    <RelativeLayout
         android:id="@+id/create_playlist"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
@@ -44,6 +64,9 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginLeft="100dp"
+            android:layout_marginRight="100dp"
+            android:imeOptions="actionDone"
             android:inputType="text"
             android:padding="10dp"
             android:textColor="@color/white_50_opacity"

@@ -17,10 +17,7 @@
 package com.vibz.vibz;
 
 import android.app.ListFragment;
-import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -114,17 +111,24 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
                         Context.LAYOUT_INFLATER_SERVICE);
                 v = vi.inflate(R.layout.row_devices, null);
             }
+
             final WifiP2pDevice device = items.get(position);
             if (device != null) {
                 Intent intent = new Intent("deviceFound");
                 LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
 
                 TextView top = (TextView) v.findViewById(R.id.device_name);
+
+                Log.d("the_best","" + "" + device);
+
                 if (top != null) {
-                    top.setText(device.deviceName);
+                    String[] tempName = device.deviceName.split("$*:");
+                    top.setText(tempName[1]);
                     top.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
-                            ConnectionActivity.connect(device);
+                            //MainActivity.connect(device);
+                            Intent intentMenu = new Intent(getActivity(),PlaylistActivity.class);
+                            startActivity(intentMenu);
                         }
                     });
                 }
@@ -138,12 +142,20 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
     @Override
     public void onPeersAvailable(WifiP2pDeviceList peerList) {
         peers.clear();
-        peers.addAll(peerList.getDeviceList());
+        List<WifiP2pDevice> listDevice = new ArrayList<>();
+        listDevice.addAll(peerList.getDeviceList());
+
+        for(int i=0; i < listDevice.size();i++) {
+            if (listDevice.get(i).deviceName.contains("PlayListName$*:")) {
+                peers.add(listDevice.get(i));
+            }
+        }
         ((WiFiPeerListAdapter) getListAdapter()).notifyDataSetChanged();
         if (peers.size() == 0) {
             return;
         }
     }
+
 
     }
 

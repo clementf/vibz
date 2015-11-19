@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -74,6 +76,7 @@ public class SongAdapter extends ArrayAdapter {
         holder.remove_addButton = (Button) row.findViewById(R.id.button_add_remove);
         holder.coverart = (ImageView) row.findViewById(R.id.coverartlist);
         holder.noteButton = (Button) row.findViewById(R.id.button_vote);
+        holder.vide = (RelativeLayout) row.findViewById(R.id.vide);
 
         holder.songTitle.setText(currSong.getTitle());
         holder.songArtist.setText(currSong.getArtist());
@@ -82,15 +85,16 @@ public class SongAdapter extends ArrayAdapter {
         holder.noteButton.setBackgroundColor(Color.rgb(1, 145, 216));
 
         if (whereWeAre.equals("ChooseCategoryActivity") || whereWeAre.equals("SearchActivity")) {
+            holder.vide.setVisibility(View.VISIBLE);
             holder.remove_addButton.setText("Add");
             holder.remove_addButton.setBackgroundColor(Color.rgb(108, 142, 72));
-            holder.noteButton.setVisibility(View.GONE);
         } else if (whereWeAre.equals("PlaylistActivity")) {
+            holder.vide.setVisibility(View.GONE);
             holder.remove_addButton.setText("Remove");
             holder.remove_addButton.setBackgroundColor(Color.rgb(170, 0, 0));
-            holder.noteButton.setVisibility(View.VISIBLE);
         }
-        holder.remove_addButton.setVisibility(View.VISIBLE);
+
+        final NewsHolder finalHolder = holder;
         holder.remove_addButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -108,6 +112,7 @@ public class SongAdapter extends ArrayAdapter {
                     int duration = Toast.LENGTH_SHORT;
                     Toast toast = Toast.makeText(context, currSong.getTitle() + " added to the playlist", duration);
                     toast.show();
+                    finalHolder.remove_addButton.setVisibility(View.GONE);
                 } else if (whereWeAre.equals("PlaylistActivity")) {
                     if (MusicService.PlaylistSongs.size() > 0) {
                         MusicService.PlaylistSongs.remove(currSong);
@@ -133,6 +138,7 @@ public class SongAdapter extends ArrayAdapter {
         ImageView coverart;
         Button remove_addButton;
         Button noteButton;
+        RelativeLayout vide;
     }
 }
 

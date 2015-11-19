@@ -21,8 +21,10 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -81,18 +83,48 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onStartOpen(int position, int action, boolean right) {
                 Log.d("swipe", String.format("onStartOpen %d - action %d", position, action));
+                ListView listView = (ListView) findViewById(R.id.song_list);
+                View v = listView.getChildAt(position -
+                        listView.getFirstVisiblePosition());
+                Button remove_addButton = (Button) v.findViewById(R.id.button_add_remove);
+                remove_addButton.setVisibility(View.VISIBLE);
+                if (lastPosition != -1 && lastPosition != position) {
+                    swipelistview.closeAnimate(lastPosition);
+                    ListView listView2 = (ListView) findViewById(R.id.song_list);
+                    View v2 = listView2.getChildAt(lastPosition -
+                            listView2.getFirstVisiblePosition());
+                    Button remove_addButton2 = (Button) v2.findViewById(R.id.button_add_remove);
+                    remove_addButton2.setVisibility(View.GONE);
+                }
+                lastPosition = position;
             }
 
             @Override
             public void onStartClose(int position, boolean right) {
                 Log.d("swipe", String.format("onStartClose %d", position));
+                ListView listView = (ListView) findViewById(R.id.song_list);
+                View v = listView.getChildAt(position -
+                        listView.getFirstVisiblePosition());
+                Button remove_addButton = (Button) v.findViewById(R.id.button_add_remove);
+                remove_addButton.setVisibility(View.GONE);
+                lastPosition = position;
             }
 
             @Override
             public void onClickFrontView(int position) {
                 Log.d("swipe", String.format("onClickFrontView %d", position));
-                if (lastPosition != -1) {
+                ListView listView = (ListView) findViewById(R.id.song_list);
+                View v = listView.getChildAt(position -
+                        listView.getFirstVisiblePosition());
+                Button remove_addButton = (Button) v.findViewById(R.id.button_add_remove);
+                remove_addButton.setVisibility(View.VISIBLE);
+                if (lastPosition != -1 && lastPosition != position) {
                     swipelistview.closeAnimate(lastPosition);
+                    ListView listView2 = (ListView) findViewById(R.id.song_list);
+                    View v2 = listView2.getChildAt(lastPosition -
+                            listView2.getFirstVisiblePosition());
+                    Button remove_addButton2 = (Button) v2.findViewById(R.id.button_add_remove);
+                    remove_addButton2.setVisibility(View.GONE);
                 }
                 swipelistview.openAnimate(position); //when you touch front view it will open
                 lastPosition = position;
@@ -101,7 +133,11 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onClickBackView(int position) {
                 Log.d("swipe", String.format("onClickBackView %d", position));
-
+                ListView listView = (ListView) findViewById(R.id.song_list);
+                View v = listView.getChildAt(position -
+                        listView.getFirstVisiblePosition());
+                Button remove_addButton = (Button) v.findViewById(R.id.button_add_remove);
+                remove_addButton.setVisibility(View.GONE);
                 swipelistview.closeAnimate(position);//when you touch back view it will close
                 lastPosition = -1;
             }
@@ -270,6 +306,7 @@ public class SearchActivity extends AppCompatActivity {
                     Drawable myDrawable = this.getResources().getDrawable(R.drawable.ic_fond);
                     bitmap = ((BitmapDrawable) myDrawable).getBitmap();
                 }
+                //Bitmap bit = getResizedBitmap(bitmap, 100);
 
                 this.listSongs.add(new Song(thisId, thisTitle, thisArtist, thisDuration, bitmap));
             }
@@ -281,5 +318,20 @@ public class SearchActivity extends AppCompatActivity {
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         float px = dp * (metrics.densityDpi / 160f);
         return (int) px;
+    }
+
+    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float) width / (float) height;
+        if (bitmapRatio > 0) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
     }
 }

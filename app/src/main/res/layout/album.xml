@@ -1,7 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/album_font"
+    android:background="@drawable/album_font2"
     android:orientation="horizontal"
     android:weightSum="1">
 
@@ -11,7 +11,7 @@
         android:layout_gravity="center_horizontal|center_vertical"
         android:layout_marginBottom="5dp"
         android:layout_weight="0.15"
-        android:background="@color/black_100_opacity"
+        android:background="@android:color/transparent"
         android:gravity="center|right">
 
         <ImageView
@@ -33,7 +33,7 @@
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="10dp"
         android:layout_weight="0.85"
-        android:background="@color/black_100_opacity"
+        android:background="@android:color/transparent"
         android:textColor="#FFFFFFFF"
         android:textSize="20sp"
         android:textStyle="bold" />

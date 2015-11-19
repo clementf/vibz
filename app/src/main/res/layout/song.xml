@@ -8,7 +8,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_marginBottom="20dp"
-        android:background="@drawable/item_font"
+        android:background="@drawable/item_font2"
         android:orientation="horizontal"
         android:tag="back"
         android:weightSum="1">
@@ -19,22 +19,11 @@
             android:layout_weight="0.7" />
 
         <RelativeLayout
+            android:id="@+id/vide"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|center_vertical"
             android:layout_weight="0.15"
-            android:gravity="center|right">
-
-
-            <Button
-                android:id="@+id/button_vote"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:text="Vote +1"
-                android:textColor="#FFFFFFFF"
-                android:textStyle="bold" />
-
-        </RelativeLayout>
+            android:visibility="gone" />
 
         <RelativeLayout
             android:layout_width="0dp"
@@ -50,6 +39,27 @@
                 android:layout_height="fill_parent"
                 android:text=""
                 android:textColor="#FFFFFFFF"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layout_vote"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_weight="0.15"
+            android:gravity="center|right"
+            android:visibility="gone">
+
+
+            <Button
+                android:id="@+id/button_vote"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="Vote +1"
+                android:textColor="#FFFFFFFF"
                 android:textStyle="bold" />
 
         </RelativeLayout>
@@ -60,7 +70,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_marginBottom="20dp"
-        android:background="@drawable/item_font"
+        android:background="@drawable/item_font3"
         android:orientation="horizontal"
         android:tag="front"
         android:weightSum="1">
