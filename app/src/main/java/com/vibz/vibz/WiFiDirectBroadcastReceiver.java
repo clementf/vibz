@@ -16,17 +16,25 @@
 
 package com.vibz.vibz;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.NetworkInfo;
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 import android.util.Log;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  * A BroadcastReceiver that notifies of important wifi p2p events.
@@ -35,7 +43,9 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
     private WifiP2pManager manager;
     private Channel channel;
-    private MainActivity activity;
+    private Activity activity;
+    public static ArrayList<InetAddress> clients = new ArrayList<InetAddress>();
+    private static final int SERVER_PORT = 1030;
 
     private BroadcastReceiver setDeviceName = new BroadcastReceiver() {
         @Override
@@ -60,7 +70,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
      * @param activity activity associated with the receiver
      */
     public WiFiDirectBroadcastReceiver(WifiP2pManager manager, Channel channel,
-                                       MainActivity activity) {
+                                       Activity activity) {
         super();
         this.manager = manager;
         this.channel = channel;
@@ -74,12 +84,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
             int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
-            if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
-                activity.setIsWifiP2pEnabled(true);
-            } else {
-                activity.setIsWifiP2pEnabled(false);
-            }
-            Log.d("the_best", "State changed action");
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
 
             // request available peers from the wifi p2p manager. This is an
@@ -92,7 +96,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
             NetworkInfo networkInfo = intent
                     .getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
-            Log.d("the_best", "Peers changed action" + networkInfo);
 
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             if (manager == null) {
@@ -102,14 +105,44 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                     .getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
 
             if (networkInfo.isConnected()) {
-
+                Log.d("the_best", "je suis connecte avec un appareil");
                 // We are connected with the other device, request connection
                 // info to find group owner IP
+                manager.requestConnectionInfo(channel, new WifiP2pManager.ConnectionInfoListener() {
+                    public void onConnectionInfoAvailable(WifiP2pInfo info) {
+                        Log.d("the_best", "" + info);
+                        String groupOwnerAddress = info.groupOwnerAddress.getHostAddress();
 
-                //manager.requestConnectionInfo(channel, connectionListener);
+                        // After the group negotiation, we can determine the group owner.
+                        if (info.groupFormed && info.isGroupOwner) {
+                            Log.d("the_best", "Server Starts");
+                            startServer();
+
+                        } else if (info.groupFormed) {
+                            Socket socket = new Socket();
+                            try {
+                                Log.d("the_best", "Client comes");
+                                socket.connect(new InetSocketAddress(groupOwnerAddress, SERVER_PORT));
+                            } catch (Exception e) {
+                            }
+                        }
+                    }
+                });
             }
-            Log.d("the_best", "" + "connection changed action");
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
+        }
+    }
+    public void startServer() {
+        clients.clear();
+        // Collect client ip's
+        try {
+            ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                clients.add(clientSocket.getInetAddress());
+                clientSocket.close();
+            }
+        } catch (IOException e) {
         }
     }
 }

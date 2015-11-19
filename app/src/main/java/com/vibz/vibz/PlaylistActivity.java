@@ -43,8 +43,8 @@ public class PlaylistActivity extends AppCompatActivity {
     ArrayList<Song> itemSong;
     public static final String TAG = "wifidirectdemo";
     private WifiP2pManager manager;
+    public static WifiP2pManager.Channel channel;
     private boolean isWifiP2pEnabled = false;
-    private boolean retryChannel = false;
     private BroadcastReceiver onCompletionListener = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -53,22 +53,8 @@ public class PlaylistActivity extends AppCompatActivity {
             addFirstSong();
             seek_bar.setMax((int) musicSrv.CurrentSong.get(0).getDuration());
         }
+
     };
-
-    private BroadcastReceiver onNext = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            updateUI();
-        }
-    };
-
-
-    /**
-     * @param isWifiP2pEnabled the isWifiP2pEnabled to set
-     */
-    public void setIsWifiP2pEnabled(boolean isWifiP2pEnabled) {
-        this.isWifiP2pEnabled = isWifiP2pEnabled;
-    }
 
     public static MusicService musicSrv;
     public static SongAdapter songAdt;
@@ -76,9 +62,11 @@ public class PlaylistActivity extends AppCompatActivity {
     private ListView itemView;
     private boolean musicBound = false;
     public static SeekBar seek_bar;
+    private BroadcastReceiver receiver = null;
     private Handler seekHandler = new Handler();
     private TextView song_progress_text;
     private TextView current_song_text;
+    private final IntentFilter intentFilter = new IntentFilter();
     private ServiceConnection musicConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -95,10 +83,26 @@ public class PlaylistActivity extends AppCompatActivity {
     };
 
 
+    private BroadcastReceiver onNext = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateUINext();
+        }
+    };
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.menu);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+
+        receiver = new WiFiDirectBroadcastReceiver(manager, channel,this);
+        registerReceiver(receiver, intentFilter);
 
         swipelistview = (SwipeListView) findViewById(R.id.playlist);
         itemSong = new ArrayList<Song>();
@@ -228,7 +232,7 @@ public class PlaylistActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         LocalBroadcastManager.getInstance(this).registerReceiver(onCompletionListener,
-                new IntentFilter("UpdateName"));
+                new IntentFilter("musicCompletion"));
 
         LocalBroadcastManager.getInstance(this).registerReceiver(onNext,
                 new IntentFilter("player.next"));
@@ -314,7 +318,7 @@ public class PlaylistActivity extends AppCompatActivity {
             ImageView firstcoverart = (ImageView) findViewById(R.id.coverart);
             LinearLayout covfond = (LinearLayout) findViewById(R.id.coverartfond);
 
-            Bitmap blurbit = fastblur(musicSrv.CurrentSong.get(0).getCoverart(), 0.1f, 10);
+            Bitmap blurbit = ImageProcessing.fastblur(musicSrv.CurrentSong.get(0).getCoverart(), 0.1f, 10);
             firstcoverart.setImageBitmap(musicSrv.CurrentSong.get(0).getCoverart()); //associated cover art in bitmap;
             BitmapDrawable ob = new BitmapDrawable(getResources(), blurbit);
             covfond.setBackgroundDrawable(ob);
@@ -359,16 +363,17 @@ public class PlaylistActivity extends AppCompatActivity {
 
     public void onNextSong(View view) {
         musicSrv.nextSong();
-        updateUI();
+        updateUINext();
     }
 
-    public void updateUI() {
+    public void updateUINext(){
         if (MusicService.CurrentSong.size() > 0) {
             seek_bar.setMax((int) MusicService.CurrentSong.get(0).getDuration());
             songAdt.notifyDataSetChanged();
             addFirstSong();
         }
     }
+
 
     //Useful method
     public String convertPositionString(long position) {
@@ -406,219 +411,11 @@ public class PlaylistActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-//    Stack Blur Algorithm by Mario Klingemann <mario@quasimondo.com>
-
-    public Bitmap fastblur(Bitmap sentBitmap, float scale, int radius) {
-
-        int width = Math.round(sentBitmap.getWidth() * scale);
-        int height = Math.round(sentBitmap.getHeight() * scale);
-        sentBitmap = Bitmap.createScaledBitmap(sentBitmap, width, height, false);
-
-        Bitmap bitmap = sentBitmap.copy(sentBitmap.getConfig(), true);
-
-        if (radius < 1) {
-            return (null);
-        }
-
-        int w = bitmap.getWidth();
-        int h = bitmap.getHeight();
-
-        int[] pix = new int[w * h];
-        Log.e("pix", w + " " + h + " " + pix.length);
-        bitmap.getPixels(pix, 0, w, 0, 0, w, h);
-
-        int wm = w - 1;
-        int hm = h - 1;
-        int wh = w * h;
-        int div = radius + radius + 1;
-
-        int r[] = new int[wh];
-        int g[] = new int[wh];
-        int b[] = new int[wh];
-        int rsum, gsum, bsum, x, y, i, p, yp, yi, yw;
-        int vmin[] = new int[Math.max(w, h)];
-
-        int divsum = (div + 1) >> 1;
-        divsum *= divsum;
-        int dv[] = new int[256 * divsum];
-        for (i = 0; i < 256 * divsum; i++) {
-            dv[i] = (i / divsum);
-        }
-
-        yw = yi = 0;
-
-        int[][] stack = new int[div][3];
-        int stackpointer;
-        int stackstart;
-        int[] sir;
-        int rbs;
-        int r1 = radius + 1;
-        int routsum, goutsum, boutsum;
-        int rinsum, ginsum, binsum;
-
-        for (y = 0; y < h; y++) {
-            rinsum = ginsum = binsum = routsum = goutsum = boutsum = rsum = gsum = bsum = 0;
-            for (i = -radius; i <= radius; i++) {
-                p = pix[yi + Math.min(wm, Math.max(i, 0))];
-                sir = stack[i + radius];
-                sir[0] = (p & 0xff0000) >> 16;
-                sir[1] = (p & 0x00ff00) >> 8;
-                sir[2] = (p & 0x0000ff);
-                rbs = r1 - Math.abs(i);
-                rsum += sir[0] * rbs;
-                gsum += sir[1] * rbs;
-                bsum += sir[2] * rbs;
-                if (i > 0) {
-                    rinsum += sir[0];
-                    ginsum += sir[1];
-                    binsum += sir[2];
-                } else {
-                    routsum += sir[0];
-                    goutsum += sir[1];
-                    boutsum += sir[2];
-                }
-            }
-            stackpointer = radius;
-
-            for (x = 0; x < w; x++) {
-
-                r[yi] = dv[rsum];
-                g[yi] = dv[gsum];
-                b[yi] = dv[bsum];
-
-                rsum -= routsum;
-                gsum -= goutsum;
-                bsum -= boutsum;
-
-                stackstart = stackpointer - radius + div;
-                sir = stack[stackstart % div];
-
-                routsum -= sir[0];
-                goutsum -= sir[1];
-                boutsum -= sir[2];
-
-                if (y == 0) {
-                    vmin[x] = Math.min(x + radius + 1, wm);
-                }
-                p = pix[yw + vmin[x]];
-
-                sir[0] = (p & 0xff0000) >> 16;
-                sir[1] = (p & 0x00ff00) >> 8;
-                sir[2] = (p & 0x0000ff);
-
-                rinsum += sir[0];
-                ginsum += sir[1];
-                binsum += sir[2];
-
-                rsum += rinsum;
-                gsum += ginsum;
-                bsum += binsum;
-
-                stackpointer = (stackpointer + 1) % div;
-                sir = stack[(stackpointer) % div];
-
-                routsum += sir[0];
-                goutsum += sir[1];
-                boutsum += sir[2];
-
-                rinsum -= sir[0];
-                ginsum -= sir[1];
-                binsum -= sir[2];
-
-                yi++;
-            }
-            yw += w;
-        }
-        for (x = 0; x < w; x++) {
-            rinsum = ginsum = binsum = routsum = goutsum = boutsum = rsum = gsum = bsum = 0;
-            yp = -radius * w;
-            for (i = -radius; i <= radius; i++) {
-                yi = Math.max(0, yp) + x;
-
-                sir = stack[i + radius];
-
-                sir[0] = r[yi];
-                sir[1] = g[yi];
-                sir[2] = b[yi];
-
-                rbs = r1 - Math.abs(i);
-
-                rsum += r[yi] * rbs;
-                gsum += g[yi] * rbs;
-                bsum += b[yi] * rbs;
-
-                if (i > 0) {
-                    rinsum += sir[0];
-                    ginsum += sir[1];
-                    binsum += sir[2];
-                } else {
-                    routsum += sir[0];
-                    goutsum += sir[1];
-                    boutsum += sir[2];
-                }
-
-                if (i < hm) {
-                    yp += w;
-                }
-            }
-            yi = x;
-            stackpointer = radius;
-            for (y = 0; y < h; y++) {
-                // Preserve alpha channel: ( 0xff000000 & pix[yi] )
-                pix[yi] = (0xff000000 & pix[yi]) | (dv[rsum] << 16) | (dv[gsum] << 8) | dv[bsum];
-
-                rsum -= routsum;
-                gsum -= goutsum;
-                bsum -= boutsum;
-
-                stackstart = stackpointer - radius + div;
-                sir = stack[stackstart % div];
-
-                routsum -= sir[0];
-                goutsum -= sir[1];
-                boutsum -= sir[2];
-
-                if (x == 0) {
-                    vmin[y] = Math.min(y + r1, hm) * w;
-                }
-                p = x + vmin[y];
-
-                sir[0] = r[p];
-                sir[1] = g[p];
-                sir[2] = b[p];
-
-                rinsum += sir[0];
-                ginsum += sir[1];
-                binsum += sir[2];
-
-                rsum += rinsum;
-                gsum += ginsum;
-                bsum += binsum;
-
-                stackpointer = (stackpointer + 1) % div;
-                sir = stack[stackpointer];
-
-                routsum += sir[0];
-                goutsum += sir[1];
-                boutsum += sir[2];
-
-                rinsum -= sir[0];
-                ginsum -= sir[1];
-                binsum -= sir[2];
-
-                yi += w;
-            }
-        }
-
-        Log.e("pix", w + " " + h + " " + pix.length);
-        bitmap.setPixels(pix, 0, w, 0, 0, w, h);
-
-        return (bitmap);
-    }
-
     public int convertDpToPixel(float dp) {
-        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        DisplayMetrics metrics =  getResources().getDisplayMetrics();
         float px = dp * (metrics.densityDpi / 160f);
         return (int) px;
     }
+
+
 }
