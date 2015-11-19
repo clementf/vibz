@@ -91,7 +91,6 @@ public class PlaylistActivity extends AppCompatActivity {
     };
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,7 +100,7 @@ public class PlaylistActivity extends AppCompatActivity {
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
-        receiver = new WiFiDirectBroadcastReceiver(manager, channel,this);
+        receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
         registerReceiver(receiver, intentFilter);
 
         swipelistview = (SwipeListView) findViewById(R.id.playlist);
@@ -366,7 +365,7 @@ public class PlaylistActivity extends AppCompatActivity {
         updateUINext();
     }
 
-    public void updateUINext(){
+    public void updateUINext() {
         if (MusicService.CurrentSong.size() > 0) {
             seek_bar.setMax((int) MusicService.CurrentSong.get(0).getDuration());
             songAdt.notifyDataSetChanged();
@@ -399,6 +398,14 @@ public class PlaylistActivity extends AppCompatActivity {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         //Yes button clicked, do something
+                        if (MusicService.isPlaying == true) {
+                            MusicService.player.pause();
+                            MusicService.isPlaying = false;
+                            MusicService.firstPlay = false;
+                            MusicService.CurrentSong.clear();
+                            MusicService.PlaylistSongs.clear();
+                            PlaylistActivity.songAdt.notifyDataSetChanged();
+                        }
                         PlaylistActivity.this.finish();
                     }
                 })
@@ -412,7 +419,7 @@ public class PlaylistActivity extends AppCompatActivity {
     }
 
     public int convertDpToPixel(float dp) {
-        DisplayMetrics metrics =  getResources().getDisplayMetrics();
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
         float px = dp * (metrics.densityDpi / 160f);
         return (int) px;
     }

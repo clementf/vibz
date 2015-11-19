@@ -30,7 +30,7 @@ public class MusicService extends Service implements
         MediaPlayer.OnCompletionListener {
 
     private final IBinder musicBind = new MusicBinder();
-    private MediaPlayer player;
+    public static MediaPlayer player;
     public static String PlaylistName = "";
     public static ArrayList<Song> CurrentSong = new ArrayList<>();;
     public static ArrayList<Song> PlaylistSongs = new ArrayList<>();

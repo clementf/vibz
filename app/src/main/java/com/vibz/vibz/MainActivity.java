@@ -117,7 +117,7 @@ public class MainActivity extends Activity {
                     findViewById(R.id.linearLayout1).setVisibility(View.VISIBLE);
                     findViewById(R.id.playlist_name).setVisibility(View.GONE);
                     findViewById(R.id.Image_create).setVisibility(View.GONE);
-
+                    ((EditText) findViewById(R.id.playlist_name)).setText("");
                     findViewById(R.id.loadingPanel).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, 0, 0.05f));
                     findViewById(R.id.create_playlist).setLayoutParams(new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, 0, 0.8f));
 
