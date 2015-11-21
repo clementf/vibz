@@ -9,12 +9,12 @@ import android.graphics.Bitmap;
 public class Album {
     private long id;
     private String title;
-    private Bitmap coverart;
 
-    public Album(long AlbumID, String AlbumTitle, Bitmap bitmap) {
+
+    public Album(long AlbumID, String AlbumTitle) {
         this.id = AlbumID;
         this.title = AlbumTitle;
-        this.coverart = bitmap;
+
     }
 
     public long getID() {
@@ -25,8 +25,6 @@ public class Album {
         return this.title;
     }
 
-    public Bitmap getCoverart() {
-        return this.coverart;
-    }
+
 
 }

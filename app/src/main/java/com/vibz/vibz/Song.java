@@ -1,6 +1,7 @@
 package com.vibz.vibz;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
 
 /**
  * Created by clement on 06/10/2015.
@@ -11,15 +12,18 @@ public class Song {
     private long id;
     private String title;
     private String artist;
+    private long albumId;
     private long duration;
     private Bitmap coverart;
+    private Uri bitmapUri;
 
-    public Song(long songID, String songTitle, String songArtist, long duration, Bitmap bitmap) {
+    public Song(long songID, String songTitle, String songArtist, long albumId, long duration, Uri bitmap) {
         this.id = songID;
         this.title = songTitle;
         this.artist = songArtist;
         this.duration = duration;
-        this.coverart = bitmap;
+        this.bitmapUri = bitmap;
+        this.albumId = albumId;
     }
 
     public long getID() {
@@ -36,6 +40,14 @@ public class Song {
 
     public long getDuration() {
         return this.duration;
+    }
+
+    public Uri getBitmapUri(){
+        return this.bitmapUri;
+    }
+
+    public long getAlbumId(){
+        return this.albumId;
     }
 
     public String getStringDuration() {

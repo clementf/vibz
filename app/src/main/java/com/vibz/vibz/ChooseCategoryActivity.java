@@ -255,14 +255,11 @@ public class ChooseCategoryActivity extends AppCompatActivity {
         //Once we have the music, we iterate over it
         if (musicCursor != null && musicCursor.moveToFirst()) {
             //get columns
-            int titleColumn = musicCursor.getColumnIndex
-                    (MediaStore.Audio.Media.TITLE);
-            int idColumn = musicCursor.getColumnIndex
-                    (MediaStore.Audio.Media._ID);
-            int artistColumn = musicCursor.getColumnIndex
-                    (MediaStore.Audio.Media.ARTIST);
-            int durationColumn = musicCursor.getColumnIndex
-                    (MediaStore.Audio.Media.DURATION);
+            int titleColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
+            int idColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media._ID);
+            int artistColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
+            int albumColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
+            int durationColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
 
 
             //add songs to list
@@ -271,30 +268,14 @@ public class ChooseCategoryActivity extends AppCompatActivity {
                 String thisTitle = musicCursor.getString(titleColumn);
                 String thisArtist = musicCursor.getString(artistColumn);
                 Long thisDuration = musicCursor.getLong(durationColumn);
+                Long albumId = musicCursor.getLong(albumColumn);
                 android.util.Log.d("clem", "search results allSongs " + musicCursor.getString(titleColumn));
                 android.util.Log.d("clem", "song id : " + musicCursor.getString(artistColumn));
-                android.util.Log.d("hugo", "id for coverart: " + musicCursor.getLong(idColumn));
 
-                //Get cover
+                //Get cover uri
 
                 Uri trackUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, thisId);
-                MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-                mmr.setDataSource(this.getApplicationContext(), trackUri);
-                Bitmap bitmap;
-                byte[] data = mmr.getEmbeddedPicture();
-
-                // convert the byte array to a bitmap
-                if (data != null) {
-                    bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                } else {
-                    Drawable myDrawable = this.getResources().getDrawable(R.drawable.ic_fond);
-                    bitmap = ((BitmapDrawable) myDrawable).getBitmap();
-                }
-//                Log.i("debug","freeMemoryAllowed:"+Runtime.getRuntime().freeMemory());
-//                Log.i("debug","maxMemoryAllowed:"+Runtime.getRuntime().maxMemory());
-//                Log.i("debug","totalMemoryAllowed:"+Runtime.getRuntime().totalMemory());
-                //Bitmap bit = getResizedBitmap(bitmap,100);
-                this.listSongs.add(new Song(thisId, thisTitle, thisArtist, thisDuration, bitmap));
+                this.listSongs.add(new Song(thisId, thisTitle, thisArtist, albumId, thisDuration, trackUri));
             }
             while (musicCursor.moveToNext());
         }
@@ -316,11 +297,8 @@ public class ChooseCategoryActivity extends AppCompatActivity {
                     (MediaStore.Audio.Media._ID);
             do {
                 long thisId = musicCursor.getLong(idColumn);
-                Album album = new Album(thisId, musicCursor.getString(titleColumn), null);
-                Bitmap bitmap = getBitmapFromSong(album);
-                //bit = getResizedBitmap(bitmap,100);
                 android.util.Log.d("clem", "search results allAlbums " + musicCursor.getString(titleColumn));
-                this.listAlbums.add(new Album(thisId, musicCursor.getString(titleColumn), bitmap));
+                this.listAlbums.add(new Album(thisId, musicCursor.getString(titleColumn)));
             }
             while (musicCursor.moveToNext());
             return true;
@@ -541,58 +519,5 @@ public class ChooseCategoryActivity extends AppCompatActivity {
         return (int) px;
     }
 
-    /**
-     * Get the song list from the device
-     */
-    public Bitmap getBitmapFromSong(Album album) {
-        String selection = MediaStore.Audio.Media.ALBUM_ID + " = '" + album.getID() + "'";
-        Cursor musicCursor = MusicAccess.getAllSongs(this, selection, null, null);
-        //Once we have the music, we iterate over it
-        Bitmap bitmap = null;
-        Bitmap bit = null;
-        if (musicCursor != null && musicCursor.moveToFirst()) {
-            //get columns
-            int idColumn = musicCursor.getColumnIndex
-                    (MediaStore.Audio.Media._ID);
 
-
-            //add songs to list
-            do {
-                long thisId = musicCursor.getLong(idColumn);
-
-                //Get cover
-
-                Uri trackUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, thisId);
-                MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-                mmr.setDataSource(this.getApplicationContext(), trackUri);
-                byte[] data = mmr.getEmbeddedPicture();
-
-                // convert the byte array to a bitmap
-                if (data != null) {
-                    bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                } else {
-                    Drawable myDrawable = this.getResources().getDrawable(R.drawable.ic_fond);
-                    bitmap = ((BitmapDrawable) myDrawable).getBitmap();
-                }
-                //bit = getResizedBitmap(bitmap,100);
-            }
-            while (musicCursor.moveToNext());
-        }
-        return bitmap;
-    }
-
-    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        float bitmapRatio = (float) width / (float) height;
-        if (bitmapRatio > 0) {
-            width = maxSize;
-            height = (int) (width / bitmapRatio);
-        } else {
-            height = maxSize;
-            width = (int) (height * bitmapRatio);
-        }
-        return Bitmap.createScaledBitmap(image, width, height, true);
-    }
 }

@@ -3,10 +3,12 @@ package com.vibz.vibz;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.graphics.Bitmap;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -68,6 +70,8 @@ public class SongAdapter extends ArrayAdapter {
         LayoutInflater inflater = ((Activity) context).getLayoutInflater();
         row = inflater.inflate(layoutResID, parent, false);
 
+
+
         holder = new NewsHolder();
 
         holder.songTitle = (TextView) row.findViewById(R.id.song_title);
@@ -81,7 +85,20 @@ public class SongAdapter extends ArrayAdapter {
         holder.songTitle.setText(currSong.getTitle());
         holder.songArtist.setText(currSong.getArtist());
         holder.songDuration.setText(currSong.getStringDuration());
-        holder.coverart.setImageBitmap(currSong.getCoverart());
+
+        //Try to get the cover art from cache, or get it from the storage
+        Bitmap tmp = ImageCache.tryGetImage(currSong.getAlbumId());
+        if(tmp!= null){
+            holder.coverart.setImageBitmap(tmp);
+        }
+        else{
+            DownloadImageTask task = new DownloadImageTask(holder.coverart, this.context, currSong.getAlbumId());
+            task.execute(currSong.getBitmapUri());
+        }
+
+
+
+
         holder.noteButton.setBackgroundColor(Color.rgb(1, 145, 216));
 
         if (whereWeAre.equals("ChooseCategoryActivity") || whereWeAre.equals("SearchActivity")) {

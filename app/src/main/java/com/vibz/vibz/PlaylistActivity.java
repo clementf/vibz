@@ -316,11 +316,11 @@ public class PlaylistActivity extends AppCompatActivity {
 
             ImageView firstcoverart = (ImageView) findViewById(R.id.coverart);
             LinearLayout covfond = (LinearLayout) findViewById(R.id.coverartfond);
+            DownloadImageTask task = new DownloadImageTask(firstcoverart, this, musicSrv.CurrentSong.get(0).getAlbumId());
+            task.execute(musicSrv.CurrentSong.get(0).getBitmapUri());
 
-            Bitmap blurbit = ImageProcessing.fastblur(musicSrv.CurrentSong.get(0).getCoverart(), 0.1f, 10);
-            firstcoverart.setImageBitmap(musicSrv.CurrentSong.get(0).getCoverart()); //associated cover art in bitmap;
-            BitmapDrawable ob = new BitmapDrawable(getResources(), blurbit);
-            covfond.setBackgroundDrawable(ob);
+            BlurImageTask taskBlur = new BlurImageTask(covfond, this);
+            taskBlur.execute(musicSrv.CurrentSong.get(0).getBitmapUri());
 
             if (artist.equals("<unknown>")) {
                 firstartistView.setText("");

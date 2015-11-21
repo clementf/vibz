@@ -3,6 +3,8 @@ package com.vibz.vibz;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,7 +69,17 @@ public class AlbumAdapter extends ArrayAdapter {
         holder.coverart = (ImageView) row.findViewById(R.id.album_cover);
 
         holder.albumTitle.setText(currAlbum.getTitle());
-        holder.coverart.setImageBitmap(currAlbum.getCoverart());
+
+        //Try to get the cover art from cache, or get it from the storage
+        Bitmap tmp = ImageCache.tryGetImage(currAlbum.getID());
+        if(tmp!= null){
+            holder.coverart.setImageBitmap(tmp);
+        }
+        else{
+            Uri albumUri = ImageProcessing.getCoverUriForAlbum(currAlbum, this.context);
+            DownloadImageTask task = new DownloadImageTask(holder.coverart, this.context, currAlbum.getID());
+            task.execute(albumUri);
+        }
 
         final long itemName = albums.get(position).getID();
 

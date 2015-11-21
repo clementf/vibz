@@ -274,41 +274,24 @@ public class SearchActivity extends AppCompatActivity {
         //Once we have the music, we iterate over it
         if (musicCursor != null && musicCursor.moveToFirst()) {
             //get columns
-            int titleColumn = musicCursor.getColumnIndex
-                    (MediaStore.Audio.Media.TITLE);
-            int idColumn = musicCursor.getColumnIndex
-                    (MediaStore.Audio.Media._ID);
-            int artistColumn = musicCursor.getColumnIndex
-                    (MediaStore.Audio.Media.ARTIST);
-            int durationColumn = musicCursor.getColumnIndex
-                    (MediaStore.Audio.Media.DURATION);
+            int titleColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
+            int idColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media._ID);
+            int artistColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
+            int albumColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
+            int durationColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
             //add songs to list
             do {
                 long thisId = musicCursor.getLong(idColumn);
                 String thisTitle = musicCursor.getString(titleColumn);
                 String thisArtist = musicCursor.getString(artistColumn);
                 Long thisDuration = musicCursor.getLong(durationColumn);
+                Long albumId = musicCursor.getLong(albumColumn);
                 android.util.Log.d("clem", "search results allSongs " + musicCursor.getString(titleColumn));
                 android.util.Log.d("clem", "song id : " + musicCursor.getString(artistColumn));
 
                 //Get cover
-
                 Uri trackUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, thisId);
-                MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-                mmr.setDataSource(this.getApplicationContext(), trackUri);
-                Bitmap bitmap;
-                byte[] data = mmr.getEmbeddedPicture();
-
-                // convert the byte array to a bitmap
-                if (data != null) {
-                    bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                } else {
-                    Drawable myDrawable = this.getResources().getDrawable(R.drawable.ic_fond);
-                    bitmap = ((BitmapDrawable) myDrawable).getBitmap();
-                }
-                //Bitmap bit = getResizedBitmap(bitmap, 100);
-
-                this.listSongs.add(new Song(thisId, thisTitle, thisArtist, thisDuration, bitmap));
+                this.listSongs.add(new Song(thisId, thisTitle, thisArtist, albumId, thisDuration, trackUri));
             }
             while (musicCursor.moveToNext());
         }

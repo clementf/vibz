@@ -1,6 +1,15 @@
 package com.vibz.vibz;
 
+import android.content.ContentUris;
+import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.MediaMetadataRetriever;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
@@ -216,6 +225,44 @@ public class ImageProcessing {
         bitmap.setPixels(pix, 0, w, 0, 0, w, h);
 
         return (bitmap);
+    }
+
+    /**
+     * Get the song list from the device
+     */
+    public static Uri getCoverUriForAlbum(Album album, Context context) {
+        String selection = MediaStore.Audio.Media.ALBUM_ID + " = '" + album.getID() + "'";
+        Cursor musicCursor = MusicAccess.getAllSongs(context, selection, null, null);
+        Uri trackUri = null;
+        //Once we have the music, we iterate over it
+        Bitmap bitmap = null;
+        if (musicCursor != null && musicCursor.moveToFirst()) {
+            //get columns
+            int idColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media._ID);
+            //add songs to list
+            do {
+                long thisId = musicCursor.getLong(idColumn);
+                //Get cover
+                trackUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, thisId);
+            }
+            while (musicCursor.moveToNext() && trackUri == null);
+        }
+        return trackUri;
+    }
+
+    public static Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float) width / (float) height;
+        if (bitmapRatio > 0) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
     }
 
 }
