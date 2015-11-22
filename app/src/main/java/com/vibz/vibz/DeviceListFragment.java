@@ -104,17 +104,20 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
                 TextView top = (TextView) v.findViewById(R.id.device_name);
                 if (top != null) {
                     top.setText(device.deviceName);
-                    String[] tempName = device.deviceName.split("$*:");
-                    top.setText(tempName[1]);
-                    top.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            Intent intent = new Intent("onConnect");
-                            intent.putExtra("Device",device);
-                            LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
-                            Intent intentMenu = new Intent(getActivity(),PlaylistActivity.class);
-                            startActivity(intentMenu);
-                        }
-                    });
+                    try {
+                        String[] tempName = device.deviceName.split("$*:");
+                        Log.d("the_best",tempName[1]);
+                        top.setText(tempName[1]);
+                        top.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View v) {
+                                Intent intent = new Intent("onConnect");
+                                intent.putExtra("Device", device);
+                                LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+                                Intent intentMenu = new Intent(getActivity(), PlaylistActivity.class);
+                                startActivity(intentMenu);
+                            }
+                        });
+                    }catch(Exception e){};
                 }
             }
             return v;

@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.NetworkInfo;
+import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
@@ -44,6 +45,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     private WifiP2pManager manager;
     private Channel channel;
     private Activity activity;
+    public static String mydeviceName;
     public static ArrayList<InetAddress> clients = new ArrayList<InetAddress>();
     private static final int SERVER_PORT = 1030;
 
@@ -105,12 +107,12 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                     .getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
 
             if (networkInfo.isConnected()) {
-                Log.d("the_best", "je suis connecte avec un appareil");
+
                 // We are connected with the other device, request connection
                 // info to find group owner IP
                 manager.requestConnectionInfo(channel, new WifiP2pManager.ConnectionInfoListener() {
                     public void onConnectionInfoAvailable(WifiP2pInfo info) {
-                        Log.d("the_best", "" + info);
+                        Log.d("the_best", "je suis connecte avec un appareil");
                         String groupOwnerAddress = info.groupOwnerAddress.getHostAddress();
 
                         // After the group negotiation, we can determine the group owner.
@@ -130,6 +132,12 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                 });
             }
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
+                if( MusicService.premiereDevice!= true ) {
+                    WifiP2pDevice device = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
+                    mydeviceName = device.deviceName;
+                    MusicService.premiereDevice = true;
+                    Log.d("the_best","Quand est ce que je rentre la dedans" + device.deviceName );
+                }
         }
     }
     public void startServer() {
