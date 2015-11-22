@@ -58,7 +58,6 @@ public class DataTransferService extends IntentService {
                 }
             });
         }
-
     };
 
     class infoReceiver extends BroadcastReceiver implements WifiP2pManager.ConnectionInfoListener {

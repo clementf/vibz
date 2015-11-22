@@ -81,10 +81,13 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d("clem" , "onReceive");
         String action = intent.getAction();
         if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
             int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
-        } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
+        }
+        else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
+
 
             // request available peers from the wifi p2p manager. This is an
             // asynchronous call and the calling activity is notified with a
@@ -97,7 +100,8 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             NetworkInfo networkInfo = intent
                     .getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
 
-        } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
+        }
+        else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             if (manager == null) {
                 return;
             }
@@ -135,14 +139,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     public void startServer() {
         clients.clear();
         // Collect client ip's
-        try {
-            ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
-            while (true) {
-                Socket clientSocket = serverSocket.accept();
-                clients.add(clientSocket.getInetAddress());
-                clientSocket.close();
-            }
-        } catch (IOException e) {
-        }
+        DataTransferAsync serverConnection = new DataTransferAsync(this.activity);
+        serverConnection.execute();
     }
 }

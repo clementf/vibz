@@ -81,8 +81,7 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
          * @param textViewResourceId
          * @param objects
          */
-        public WiFiPeerListAdapter(Context context, int textViewResourceId,
-                                   List<WifiP2pDevice> objects) {
+        public WiFiPeerListAdapter(Context context, int textViewResourceId, List<WifiP2pDevice> objects) {
             super(context, textViewResourceId, objects);
             items = objects;
         }
@@ -91,8 +90,7 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
         public View getView(int position, View convertView, ViewGroup parent) {
             View v = convertView;
             if (v == null) {
-                LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(
-                        Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 v = vi.inflate(R.layout.row_devices, null);
             }
 
