@@ -120,8 +120,6 @@ public class MainActivity extends Activity {
                     ((EditText) findViewById(R.id.playlist_name)).setText("");
                     findViewById(R.id.loadingPanel).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, 0, 0.05f));
                     findViewById(R.id.create_playlist).setLayoutParams(new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, 0, 0.8f));
-
-
                     deviceInfo.isGroupOwner = true;
                     
                     Intent intent = new Intent("updateName");

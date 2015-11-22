@@ -387,6 +387,22 @@ public class PlaylistActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void resetPlaylist(){
+        if (MusicService.isPlaying == true) {
+            MusicService.player.pause();
+            MusicService.isPlaying = false;
+            MusicService.firstPlay = false;
+        }
+        MusicService.CurrentSong.clear();
+        MusicService.PlaylistSongs.clear();
+        MusicService.PlaylistName = null;
+        PlaylistActivity.songAdt.notifyDataSetChanged();
+        Intent intent = new Intent("updateName");
+        Log.d("the_best","TENTATIVE DE RESET" + WiFiDirectBroadcastReceiver.mydeviceName );
+        intent.putExtra("Playlist", WiFiDirectBroadcastReceiver.mydeviceName);
+        LocalBroadcastManager.getInstance(PlaylistActivity.this).sendBroadcast(intent);
+    }
+
     @Override
     public void onBackPressed() {
         //Put up the Yes/No message box
@@ -398,14 +414,7 @@ public class PlaylistActivity extends AppCompatActivity {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         //Yes button clicked, do something
-                        if (MusicService.isPlaying == true) {
-                            MusicService.player.pause();
-                            MusicService.isPlaying = false;
-                            MusicService.firstPlay = false;
-                            MusicService.CurrentSong.clear();
-                            MusicService.PlaylistSongs.clear();
-                            PlaylistActivity.songAdt.notifyDataSetChanged();
-                        }
+                        resetPlaylist();
                         PlaylistActivity.this.finish();
                     }
                 })
@@ -415,6 +424,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        resetPlaylist();
         super.onDestroy();
     }
 
