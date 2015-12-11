@@ -10,6 +10,7 @@ import android.net.Uri;
  */
 public class Song {
     private long id;
+    private long nbVote;
     private String title;
     private String artist;
     private long albumId;
@@ -17,17 +18,26 @@ public class Song {
     private Bitmap coverart;
     private Uri bitmapUri;
 
-    public Song(long songID, String songTitle, String songArtist, long albumId, long duration, Uri bitmap) {
+    public Song(long songID, String songTitle, String songArtist, long albumId, long duration, Uri bitmap, long NbVote) {
         this.id = songID;
         this.title = songTitle;
         this.artist = songArtist;
         this.duration = duration;
         this.bitmapUri = bitmap;
         this.albumId = albumId;
+        this.nbVote = NbVote;
     }
 
     public long getID() {
         return this.id;
+    }
+
+    public long getNbVote() {
+        return this.nbVote;
+    }
+
+    public void setNbVote(long nbVote) {
+        this.nbVote = nbVote;
     }
 
     public String getTitle() {

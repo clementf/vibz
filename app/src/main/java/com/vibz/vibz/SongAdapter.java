@@ -60,7 +60,6 @@ public class SongAdapter extends ArrayAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-
         NewsHolder holder = null;
         View row = convertView;
         holder = null;
@@ -71,9 +70,9 @@ public class SongAdapter extends ArrayAdapter {
         row = inflater.inflate(layoutResID, parent, false);
 
 
-
         holder = new NewsHolder();
 
+        holder.nbVote = (TextView) row.findViewById(R.id.voteNumber);
         holder.songTitle = (TextView) row.findViewById(R.id.song_title);
         holder.songArtist = (TextView) row.findViewById(R.id.song_artist);
         holder.songDuration = (TextView) row.findViewById(R.id.song_duration);
@@ -82,36 +81,65 @@ public class SongAdapter extends ArrayAdapter {
         holder.noteButton = (Button) row.findViewById(R.id.button_vote);
         holder.vide = (RelativeLayout) row.findViewById(R.id.vide);
 
+        holder.nbVote.setText("+" + currSong.getNbVote());
         holder.songTitle.setText(currSong.getTitle());
         holder.songArtist.setText(currSong.getArtist());
         holder.songDuration.setText(currSong.getStringDuration());
 
         //Try to get the cover art from cache, or get it from the storage
         Bitmap tmp = ImageCache.tryGetImage(currSong.getAlbumId());
-        if(tmp!= null){
+        if (tmp != null) {
             holder.coverart.setImageBitmap(tmp);
-        }
-        else{
+        } else {
             DownloadImageTask task = new DownloadImageTask(holder.coverart, this.context, currSong.getAlbumId());
             task.execute(currSong.getBitmapUri());
         }
-
-
 
 
         holder.noteButton.setBackgroundColor(Color.rgb(1, 145, 216));
 
         if (whereWeAre.equals("ChooseCategoryActivity") || whereWeAre.equals("SearchActivity")) {
             holder.vide.setVisibility(View.VISIBLE);
+            holder.nbVote.setVisibility(View.GONE);
             holder.remove_addButton.setText("Add");
             holder.remove_addButton.setBackgroundColor(Color.rgb(108, 142, 72));
         } else if (whereWeAre.equals("PlaylistActivity")) {
             holder.vide.setVisibility(View.GONE);
+            holder.nbVote.setVisibility(View.VISIBLE);
             holder.remove_addButton.setText("Remove");
             holder.remove_addButton.setBackgroundColor(Color.rgb(170, 0, 0));
         }
 
         final NewsHolder finalHolder = holder;
+        holder.noteButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                long nbVote = currSong.getNbVote() + 1;
+                currSong.setNbVote(nbVote);
+
+
+                for (int i = 0; i < MusicService.PlaylistSongs.size(); i++) {
+                    if (MusicService.PlaylistSongs.get(i).getNbVote() > nbVote) {
+
+                    } else if (i == position) {
+                        break;
+                    } else if (MusicService.PlaylistSongs.get(i).getNbVote() < nbVote) {
+                        MusicService.PlaylistSongs.remove(position);
+                        MusicService.PlaylistSongs.add(i, currSong);
+                        break;
+                    }
+                }
+
+                currSong.setNbVote(nbVote);
+                PlaylistActivity.songAdt.notifyDataSetChanged();
+                int duration = Toast.LENGTH_SHORT;
+                Toast toast = Toast.makeText(context, "You voted +1 for " + currSong.getTitle(), duration);
+                toast.show();
+            }
+        });
+
         holder.remove_addButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -142,7 +170,6 @@ public class SongAdapter extends ArrayAdapter {
                 swipelistview.closeAnimate(position);
             }
         });
-
         row.setTag(position);
         return row;
     }
@@ -152,6 +179,7 @@ public class SongAdapter extends ArrayAdapter {
         TextView songTitle;
         TextView songArtist;
         TextView songDuration;
+        TextView nbVote;
         ImageView coverart;
         Button remove_addButton;
         Button noteButton;

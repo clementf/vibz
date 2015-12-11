@@ -387,7 +387,7 @@ public class PlaylistActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void resetPlaylist(){
+    public void resetPlaylist() {
         if (MusicService.isPlaying == true) {
             MusicService.player.pause();
             MusicService.isPlaying = false;
@@ -398,7 +398,7 @@ public class PlaylistActivity extends AppCompatActivity {
         MusicService.PlaylistName = null;
         PlaylistActivity.songAdt.notifyDataSetChanged();
         Intent intent = new Intent("updateName");
-        Log.d("the_best","TENTATIVE DE RESET" + WiFiDirectBroadcastReceiver.mydeviceName );
+        Log.d("the_best", "TENTATIVE DE RESET" + WiFiDirectBroadcastReceiver.mydeviceName);
         intent.putExtra("Playlist", WiFiDirectBroadcastReceiver.mydeviceName);
         LocalBroadcastManager.getInstance(PlaylistActivity.this).sendBroadcast(intent);
     }

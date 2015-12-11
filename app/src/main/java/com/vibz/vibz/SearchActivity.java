@@ -212,8 +212,11 @@ public class SearchActivity extends AppCompatActivity {
             action.setDisplayShowTitleEnabled(false); //show the title in the action bar
 
             //hides the keyboard
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(edtSeach.getWindowToken(), 0);
+            View view = this.getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
 
             //add the search icon in the action bar
             mSearchAction.setIcon(getResources().getDrawable(R.drawable.ic_open_search));
@@ -291,7 +294,7 @@ public class SearchActivity extends AppCompatActivity {
 
                 //Get cover
                 Uri trackUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, thisId);
-                this.listSongs.add(new Song(thisId, thisTitle, thisArtist, albumId, thisDuration, trackUri));
+                this.listSongs.add(new Song(thisId, thisTitle, thisArtist, albumId, thisDuration, trackUri,0));
             }
             while (musicCursor.moveToNext());
         }
