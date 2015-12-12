@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
@@ -47,7 +48,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     private Activity activity;
     public static String mydeviceName;
     public static ArrayList<InetAddress> clients = new ArrayList<InetAddress>();
-    private static final int SERVER_PORT = 1030;
 
     private BroadcastReceiver setDeviceName = new BroadcastReceiver() {
         @Override
@@ -82,14 +82,9 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
-        Log.d("clem" , "onReceive");
+    public void onReceive(final Context context, Intent intent) {
         String action = intent.getAction();
-        if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
-            int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
-        }
-        else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
-
+        if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
 
             // request available peers from the wifi p2p manager. This is an
             // asynchronous call and the calling activity is notified with a
@@ -99,14 +94,13 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                         .findFragmentById(R.id.frag_list));
             }
 
-            NetworkInfo networkInfo = intent
-                    .getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
 
         }
         else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             if (manager == null) {
                 return;
             }
+
             NetworkInfo networkInfo = (NetworkInfo) intent
                     .getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
 
@@ -114,40 +108,41 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
                 // We are connected with the other device, request connection
                 // info to find group owner IP
+
                 manager.requestConnectionInfo(channel, new WifiP2pManager.ConnectionInfoListener() {
                     public void onConnectionInfoAvailable(WifiP2pInfo info) {
-                        Log.d("the_best", "je suis connecte avec un appareil");
+                        Log.d("clem", "other available connection niaaah");
                         String groupOwnerAddress = info.groupOwnerAddress.getHostAddress();
-
                         // After the group negotiation, we can determine the group owner.
                         if (info.groupFormed && info.isGroupOwner) {
-                            Log.d("the_best", "Server Starts");
-                            startServer();
 
-                        } else if (info.groupFormed) {
-                            Socket socket = new Socket();
-                            try {
-                                Log.d("the_best", "Client comes");
-                                socket.connect(new InetSocketAddress(groupOwnerAddress, SERVER_PORT));
-                            } catch (Exception e) {
-                            }
+                            new DataTransferAsync(context).execute();
+                            Log.d("clem", "We receive the file");
+                        }
+                        else if (info.groupFormed) {
+                            // The other device acts as the client.
+                            Intent serviceIntent = new Intent(context, DataTransferService.class);
+                            serviceIntent.setAction(DataTransferService.ACTION_SEND_FILE);
+                            serviceIntent.putExtra(DataTransferService.EXTRAS_FILE_PATH, Uri.parse("content://media/external/audio/media/269089").toString());
+                            serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
+                                    info.groupOwnerAddress.getHostAddress());
+                            serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_PORT, 8988);
+                            context.startService(serviceIntent);
+                            Log.d("clem", "the group is formed but we're not group owner");
                         }
                     }
                 });
             }
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
+                //WTF ?
                 if( MusicService.premiereDevice!= true ) {
                     WifiP2pDevice device = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
                     mydeviceName = device.deviceName;
                     MusicService.premiereDevice = true;
-                    Log.d("the_best","Quand est ce que je rentre la dedans" + device.deviceName );
                 }
         }
     }
-    public void startServer() {
-        clients.clear();
-        // Collect client ip's
-        DataTransferAsync serverConnection = new DataTransferAsync(this.activity);
-        serverConnection.execute();
-    }
+
+
+
 }

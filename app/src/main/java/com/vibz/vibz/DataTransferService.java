@@ -17,17 +17,9 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.net.ServerSocket;
-
-import android.net.wifi.WpsInfo;
-import android.net.wifi.p2p.WifiP2pConfig;
-import android.net.wifi.p2p.WifiP2pDevice;
-import android.net.wifi.p2p.WifiP2pInfo;
 
 public class DataTransferService extends IntentService {
     public static ArrayList<InetAddress> clients = new ArrayList<InetAddress>();
-    private boolean isWifiP2pEnabled = false;
-    private static final int SERVER_PORT = 1030;
 
     private static final int SOCKET_TIMEOUT = 5000;
     public static final String ACTION_SEND_FILE = "com.example.android.wifidirect.SEND_FILE";
@@ -39,65 +31,17 @@ public class DataTransferService extends IntentService {
         super(name);
     }
 
-    protected BroadcastReceiver connect = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            WifiP2pConfig config = new WifiP2pConfig();
-            WifiP2pDevice device = intent.getParcelableExtra("Device");
-            config.deviceAddress = device.deviceAddress;
-            config.wps.setup = WpsInfo.PBC;
+    public DataTransferService() {
+        super("DataTransferService");
 
-            MainActivity.manager.connect(MainActivity.channel, config, new WifiP2pManager.ActionListener() {
-                @Override
-                public void onSuccess() {
-                    Log.d("the_best", "Je suis connecté");
-                }
-
-                @Override
-                public void onFailure(int reason) {
-                }
-            });
-        }
-    };
-
-    class infoReceiver extends BroadcastReceiver implements WifiP2pManager.ConnectionInfoListener {
-        @Override
-        public void onConnectionInfoAvailable(WifiP2pInfo info) {
-            Log.d("the_best","" + info);
-            String groupOwnerAddress = info.groupOwnerAddress.getHostAddress();
-
-            // After the group negotiation, we can determine the group owner.
-            if (info.groupFormed && info.isGroupOwner) {
-                Log.d("the_best", "Server Starts");
-                startServer();
-
-            } else if (info.groupFormed) {
-                Socket socket = new Socket();
-                try {
-                    Log.d("the_best", "Client comes");
-                    socket.connect(new InetSocketAddress(groupOwnerAddress, SERVER_PORT));
-                } catch (IOException e) {
-                }
-            }
-        }
-
-        @Override
-        public void onReceive(Context contexte, Intent intent){}
     }
 
 
 
-
-    public DataTransferService(Context contexte) {
-        super("FileTransferService");
-        LocalBroadcastManager.getInstance(contexte).registerReceiver(connect,
-                new IntentFilter("onConnect"));
-    }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         Context context = getApplicationContext();
-        Log.d("the_best", "" + context);
         if (intent.getAction().equals(ACTION_SEND_FILE)) {
             String fileUri = intent.getExtras().getString(EXTRAS_FILE_PATH);
             String host = intent.getExtras().getString(EXTRAS_GROUP_OWNER_ADDRESS);
@@ -105,16 +49,21 @@ public class DataTransferService extends IntentService {
             int port = intent.getExtras().getInt(EXTRAS_GROUP_OWNER_PORT);
             try {
                 socket.bind(null);
+                Log.d("clem", "the uri is: " + fileUri);
                 socket.connect((new InetSocketAddress(host, port)), SOCKET_TIMEOUT);
                 OutputStream stream = socket.getOutputStream();
                 ContentResolver cr = context.getContentResolver();
                 InputStream is = null;
                 try {
                     is = cr.openInputStream(Uri.parse(fileUri));
+                    copyFile(is, stream);
                 } catch (FileNotFoundException e) {
+                    Log.d("clem", "exception :( " + e);
                 }
                 //DeviceDetailFragment.copyFile(is, stream);
             } catch (IOException e) {
+                Log.d("clem", "IO exception :( " + e);
+
             } finally {
                 if (socket != null) {
                     if (socket.isConnected()) {
@@ -130,20 +79,21 @@ public class DataTransferService extends IntentService {
         }
     }
 
-
-    public void startServer() {
-        clients.clear();
-        // Collect client ip's
+    public static boolean copyFile(InputStream inputStream, OutputStream out) {
+        Log.d("clem", "on copie des bits");
+        byte buf[] = new byte[1024];
+        int len;
         try {
-            ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
-            while (true) {
-                Socket clientSocket = serverSocket.accept();
-                clients.add(clientSocket.getInetAddress());
-                clientSocket.close();
+            while ((len = inputStream.read(buf)) != -1) {
+                out.write(buf, 0, len);
             }
+            out.close();
+            inputStream.close();
         } catch (IOException e) {
+            Log.d("clem", e.toString());
+            return false;
         }
+        return true;
     }
-
 }
 

@@ -169,8 +169,8 @@ public class ChooseCategoryActivity extends AppCompatActivity {
                         ListView listView2 = (ListView) findViewById(R.id.song_list);
                         View v2 = listView2.getChildAt(lastPosition -
                                 listView2.getFirstVisiblePosition());
-                        Button remove_addButton2 = (Button) v2.findViewById(R.id.button_add_remove);
-                        remove_addButton2.setVisibility(View.GONE);
+//                        Button remove_addButton2 = (Button) v2.findViewById(R.id.button_add_remove);
+  //                      remove_addButton2.setVisibility(View.GONE);
                     }
                     swipelistview.openAnimate(position); //when you touch front view it will open
                     lastPosition = position;
@@ -275,6 +275,7 @@ public class ChooseCategoryActivity extends AppCompatActivity {
                 //Get cover uri
 
                 Uri trackUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, thisId);
+                Log.d("clem", "Uri is : " + trackUri);
                 this.listSongs.add(new Song(thisId, thisTitle, thisArtist, albumId, thisDuration, trackUri));
             }
             while (musicCursor.moveToNext());

@@ -7,9 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.net.Uri;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
@@ -39,11 +41,12 @@ import java.util.ArrayList;
  * Created by nicolasszewe on 3/11/15.
  */
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements WifiP2pManager.ConnectionInfoListener {
     public static WifiP2pManager manager;
     public static WifiP2pManager.Channel channel;
     private BroadcastReceiver receiver = null;
     public WifiP2pInfo deviceInfo = new WifiP2pInfo();
+    public Uri uri;
     private boolean isWifiP2pEnabled = false;
     private static final int SERVER_PORT = 1030;
     private ArrayList<InetAddress> clients = new ArrayList<InetAddress>();
@@ -52,7 +55,6 @@ public class MainActivity extends Activity {
     private BroadcastReceiver setVisibleDevice = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("hugo", "Un device trouvé !");
             View view = getCurrentFocus();
             View v = findViewById(R.id.linearLayout1);
             View v2 = findViewById(R.id.create_playlist);
@@ -79,8 +81,6 @@ public class MainActivity extends Activity {
         context = getApplicationContext();
         setContentView(R.layout.connectivity);
 
-        DataTransferService dataService = new DataTransferService(this);
-
         LocalBroadcastManager.getInstance(this).registerReceiver(setVisibleDevice,
                 new IntentFilter("deviceFound"));
 
@@ -105,6 +105,14 @@ public class MainActivity extends Activity {
             }
         });
 
+        //Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        //intent.setType("image/*");
+        //startActivityForResult(intent, 20);
+
+        //Register filter for on connect callback
+        LocalBroadcastManager.getInstance(this).registerReceiver(connect,
+                new IntentFilter("onConnect"));
+
         final EditText editText = (EditText) findViewById(R.id.playlist_name);
         editText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
@@ -120,13 +128,13 @@ public class MainActivity extends Activity {
                     ((EditText) findViewById(R.id.playlist_name)).setText("");
                     findViewById(R.id.loadingPanel).setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, 0, 0.05f));
                     findViewById(R.id.create_playlist).setLayoutParams(new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, 0, 0.8f));
-                    deviceInfo.isGroupOwner = true;
-                    
+                    //deviceInfo.isGroupOwner = true;
+
                     Intent intent = new Intent("updateName");
                     intent.putExtra("Playlist", "PlayListName$*:" + MusicService.PlaylistName);
                     LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
 
-                    Intent intent2 = new Intent(MainActivity.this,PlaylistActivity.class);
+                    Intent intent2 = new Intent(MainActivity.this, PlaylistActivity.class);
                     startActivity(intent2);
                     return true;
                 }
@@ -135,44 +143,58 @@ public class MainActivity extends Activity {
         });
     }
 
-    static public void connect(WifiP2pDevice device) {
-        WifiP2pConfig config = new WifiP2pConfig();
-        config.deviceAddress = device.deviceAddress;
-        config.wps.setup = WpsInfo.PBC;
-
-        manager.connect(channel, config, new WifiP2pManager.ActionListener() {
-            @Override
-            public void onSuccess() {
-                // WiFiDirectBroadcastReceiver will notify us. Ignore for now.
-            }
-
-            @Override
-            public void onFailure(int reason) {
-            }
-        });
-    }
-
+    @Override
     public void onConnectionInfoAvailable(final WifiP2pInfo info) {
-
-        String groupOwnerAddress = info.groupOwnerAddress.getHostAddress().toString();
-
-        // After the group negotiation, we can determine the group owner.
+        Log.d("clem", "on connection info available");
+        this.deviceInfo = info;
+        // After the group negotiation, we assign the group owner as the file
+        // server. The file server is single threaded, single connection server
+        // socket.
         if (info.groupFormed && info.isGroupOwner) {
-            Log.d("The Best","Server Starts");
-            startServer();
-
+            new DataTransferAsync(this).execute();
+            Log.d("clem", "We receive the file");
         } else if (info.groupFormed) {
-            Socket socket = new Socket();
-            try {
-                Log.d("The Best","Client comes");
-                socket.connect(new InetSocketAddress(groupOwnerAddress, SERVER_PORT));
-            }catch(IOException e){}
+            // The other device acts as the client.
+            Log.d("clem", "the group is formed but we're not group owner");
         }
     }
+
+
+
+    protected BroadcastReceiver connect = new BroadcastReceiver() {
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            WifiP2pConfig config = new WifiP2pConfig();
+            WifiP2pDevice device = intent.getParcelableExtra("Device");
+            config.deviceAddress = device.deviceAddress;
+            config.wps.setup = WpsInfo.PBC;
+            config.groupOwnerIntent = 0;
+
+            MainActivity.manager.connect(MainActivity.channel, config, new WifiP2pManager.ActionListener() {
+                @Override
+                public void onSuccess() {
+                    Log.d("clem", "Je suis connecté");
+                }
+
+                @Override
+                public void onFailure(int reason) {
+                }
+            });
+        }
+    };
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("clem", "on activity result uri : " + data.getData());
+        //content://com.android.providers.media.documents/document/image%3A279572
+        uri = data.getData();
+    }
+
 
     @Override
     public void onResume() {
         super.onResume();
+        //disconnect();
         receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
         registerReceiver(receiver, intentFilter);
     }
@@ -181,6 +203,7 @@ public class MainActivity extends Activity {
     public void onPause() {
         super.onPause();
         unregisterReceiver(receiver);
+        //disconnect();
     }
 
     public void NamePlaylist(View view) {
@@ -224,19 +247,5 @@ public class MainActivity extends Activity {
 
     static public Context getContext(){
         return context;
-    }
-
-    public void startServer() {
-        clients.clear();
-        // Collect client ip's
-            try
-            {
-                ServerSocket serverSocket = new ServerSocket(SERVER_PORT) ;
-                while(true) {
-                    Socket clientSocket = serverSocket.accept();
-                    clients.add(clientSocket.getInetAddress());
-                    clientSocket.close();
-                }
-            } catch (IOException e){}
     }
 }

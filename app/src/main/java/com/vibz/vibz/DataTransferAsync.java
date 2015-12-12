@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -32,38 +33,63 @@ public class DataTransferAsync extends AsyncTask<Void, Void, String> {
 
     @Override
     public String doInBackground(Void... params) {
+        Log.d("clem", "background send data");
         try {
+            ServerSocket serverSocket = new ServerSocket(8988);
+            Log.d("clem", "Server: Socket opened");
+            Socket client = serverSocket.accept();
+            Log.d("clem", "Server: connection done");
+            final File f = new File(Environment.getExternalStorageDirectory() + "/"
+                    + context.getPackageName() + "/wifip2pshared-" + System.currentTimeMillis()
+                    + ".mp3");
 
-            /**
-             * Create a server socket and wait for client connections. This
-             * call blocks until a connection is accepted from a client
-             */
+            File dirs = new File(f.getParent());
+            if (!dirs.exists())
+                dirs.mkdirs();
+            f.createNewFile();
 
-            ServerSocket myServerSocket = new ServerSocket(9999);
-            Socket skt = myServerSocket.accept();
-            ArrayList<String> my = new ArrayList<String>();
-            my.add("Bernard");
-            my.add("Grey");
-            try {
-                ObjectOutputStream objectOutput = new ObjectOutputStream(skt.getOutputStream());
-                objectOutput.writeObject(my);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            InputStream inputstream = client.getInputStream();
+            copyFile(inputstream, new FileOutputStream(f));
+            Log.d("clem", "server: copying files " + f.toString());
+            serverSocket.close();
+            Log.d("clem", "server is closing, path is : " + f.getAbsolutePath());
+            return f.getAbsolutePath();
         } catch (IOException e) {
+            Log.e("clem", e.getMessage());
             return null;
         }
-        return "worked";
+
     }
 
 
     /**
-     * Start activity that can handle the JPEG image
+     * Start activity that can handle the music transferred
      */
     @Override
     protected void onPostExecute(String result) {
-        if (result != null) {
-            Log.d("clem", "sent data");
+        Log.d("clem", "sent data");
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.parse("file://" + result), "audio/*");
+        context.startActivity(intent);
+    }
+
+    public static boolean copyFile(InputStream inputStream, OutputStream out) {
+        Log.d("clem", "on reçoit des bits");
+        byte buf[] = new byte[1024];
+        int len;
+        try {
+            while ((len = inputStream.read(buf)) != -1) {
+                out.write(buf, 0, len);
+            }
+            out.close();
+            inputStream.close();
+        } catch (IOException e) {
+            Log.d("clem", e.toString());
+            return false;
         }
+        return true;
+
     }
 }
+

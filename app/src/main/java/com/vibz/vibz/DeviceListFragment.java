@@ -5,8 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.net.Uri;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
+import android.net.wifi.p2p.WifiP2pInfo;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,11 +29,12 @@ import java.util.List;
  * parent activity to handle user interaction events
  */
 
-public class DeviceListFragment extends ListFragment implements PeerListListener {
+public class DeviceListFragment extends ListFragment implements PeerListListener{
 
    private List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
     View mContentView = null;
     private WifiP2pDevice device;
+    private WifiP2pInfo info;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -54,7 +58,7 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
         return device;
     }
 
-    private static String getDeviceStatus(int deviceStatus) {
+    /*private static String getDeviceStatus(int deviceStatus) {
         switch (deviceStatus) {
             case WifiP2pDevice.AVAILABLE:
                 return "Available";
@@ -69,7 +73,7 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
             default:
                 return "Unknown";
         }
-    }
+    }*/
 
     /**
      * Array adapter for ListFragment that maintains WifiP2pDevice list.
@@ -111,8 +115,10 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
                                 Intent intent = new Intent("onConnect");
                                 intent.putExtra("Device", device);
                                 LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
-                                Intent intentMenu = new Intent(getActivity(), PlaylistActivity.class);
-                                startActivity(intentMenu);
+
+                                //Start new activity page : show playlist
+                                //Intent intentMenu = new Intent(getActivity(), PlaylistActivity.class);
+                                //startActivity(intentMenu);
                             }
                         });
                     }catch(Exception e){};
@@ -121,8 +127,6 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
             return v;
         }
     }
-
-
 
     @Override
     public void onPeersAvailable(WifiP2pDeviceList peerList) {
