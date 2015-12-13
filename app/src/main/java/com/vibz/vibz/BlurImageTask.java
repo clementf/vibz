@@ -45,7 +45,7 @@ public class BlurImageTask  extends AsyncTask<Uri, Integer, Bitmap> {
             bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 
         } else {
-            Drawable myDrawable = context.getResources().getDrawable(R.drawable.ic_fond);
+            Drawable myDrawable = context.getResources().getDrawable(R.drawable.item_font3);
             bitmap = ((BitmapDrawable) myDrawable).getBitmap();
         }
 
