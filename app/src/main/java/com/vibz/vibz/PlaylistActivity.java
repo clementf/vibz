@@ -1,6 +1,7 @@
 package com.vibz.vibz;
 
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -438,7 +439,9 @@ public class PlaylistActivity extends AppCompatActivity {
             MusicService.player.pause();
             MusicService.isPlaying = false;
             MusicService.firstPlay = false;
+            MusicService.player.stop();
         }
+
         MusicService.CurrentSong.clear();
         MusicService.PlaylistSongs.clear();
         MusicService.PlaylistName = null;
@@ -464,6 +467,7 @@ public class PlaylistActivity extends AppCompatActivity {
                         //Yes button clicked, do something
                         resetPlaylist();
                         PlaylistActivity.this.finish();
+
                     }
                 })
                 .setNegativeButton("No", null) //Do nothing on no
@@ -473,6 +477,8 @@ public class PlaylistActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         resetPlaylist();
+        NotificationManager nm = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        nm.cancelAll();
         super.onDestroy();
     }
 
@@ -487,8 +493,6 @@ public class PlaylistActivity extends AppCompatActivity {
         float px = dp * (metrics.densityDpi / 160f);
         return (int) px;
     }
-
-
 
 
 }

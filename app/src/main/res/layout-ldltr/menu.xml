@@ -31,42 +31,51 @@
                 android:layout_height="0dp"
                 android:layout_weight="0.05" />
 
-            <TextView
-                android:id="@+id/firstsong_title"
+            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_weight="0.15"
-                android:ellipsize="marquee"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:gravity="center"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:scrollHorizontally="true"
-                android:singleLine="true"
-                android:text="Welcome in Vibz ! Just add a song to begin !"
-                android:textColor="#ffffff"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:layout_weight="0.18">
 
-            <TextView
-                android:id="@+id/firstsong_artist"
+                <TextView
+                    android:id="@+id/firstsong_title"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:gravity="center"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:text="Welcome in Vibz ! Just add a song to begin !"
+                    android:textColor="#ffffff"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_weight="0.15"
-                android:ellipsize="marquee"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:gravity="center"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:scrollHorizontally="true"
-                android:singleLine="true"
-                android:text=""
-                android:textColor="#ffffff"
-                android:textSize="18sp" />
+                android:layout_weight="0.17">
+
+                <TextView
+                    android:id="@+id/firstsong_artist"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:gravity="center"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textColor="#ffffff"
+                     />
+            </LinearLayout>
 
             <View
                 android:layout_width="fill_parent"
@@ -78,7 +87,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
                 android:layout_gravity="center"
-                android:layout_weight="0.6"
+                android:layout_weight="0.55"
                 android:adjustViewBounds="true"
                 android:background="@null"
                 android:gravity="center"
@@ -92,15 +101,20 @@
             android:orientation="horizontal"
             android:weightSum="1">
 
-            <TextView
-                android:id="@+id/song_progress_text"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:layout_weight="0.1"
-                android:gravity="center_vertical|center_horizontal"
-                android:text=""
-                android:textColor="#ffffff" />
+                android:layout_weight="0.1">
+
+                <TextView
+                    android:id="@+id/song_progress_text"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:text=""
+                    android:textColor="#ffffff" />
+            </LinearLayout>
 
             <SeekBar
                 android:id="@+id/musicProgress"
@@ -110,15 +124,20 @@
                 android:layout_weight="0.8"
                 android:gravity="center_vertical|center_horizontal" />
 
-            <TextView
-                android:id="@+id/current_song_text"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:layout_weight="0.1"
-                android:gravity="center_vertical|center_horizontal"
-                android:text=""
-                android:textColor="#ffffff" />
+                android:layout_weight="0.1">
+
+                <TextView
+                    android:id="@+id/current_song_text"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:text=""
+                    android:textColor="#ffffff" />
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -171,23 +190,27 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/playlistName"
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="5dp"
-        android:layout_weight="0.03"
-        android:gravity="center"
-        android:textColor="@color/white_50_opacity"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:layout_weight="0.07">
+
+        <TextView
+            android:id="@+id/playlistName"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:textColor="@color/white_50_opacity"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="10dp"
-        android:layout_weight="0.54"
+        android:layout_weight="0.50"
         android:orientation="horizontal">
 
         <TextView
@@ -220,21 +243,25 @@
         android:padding="5dp"
         android:weightSum="1">
 
-
-        <Button
-            android:id="@+id/add_song"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:background="@drawable/button_shape"
-            android:clickable="true"
-            android:onClick="AddSongButton"
-            android:padding="10dp"
-            android:text="Add a song"
-            android:textAllCaps="true"
-            android:textColor="@color/white_50_opacity"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:layout_weight="1">
+
+            <Button
+                android:id="@+id/add_song"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/button_shape"
+                android:clickable="true"
+                android:onClick="AddSongButton"
+                android:padding="5dp"
+                android:text="Add a song"
+                android:textAllCaps="true"
+                android:textColor="@color/white_50_opacity"
+                android:textStyle="bold" />
+        </LinearLayout>
 
         <View
             android:layout_width="0dp"
