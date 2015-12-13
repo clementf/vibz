@@ -1,6 +1,7 @@
 package com.vibz.vibz;
 
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -433,6 +434,8 @@ public class PlaylistActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         resetPlaylist();
+        NotificationManager nm = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        nm.cancelAll();
         super.onDestroy();
     }
 

@@ -33,7 +33,8 @@ public class MusicService extends Service implements
     public static MediaPlayer player;
     public static String PlaylistName = "";
     public static boolean premiereDevice;
-    public static ArrayList<Song> CurrentSong = new ArrayList<>();;
+    public static ArrayList<Song> CurrentSong = new ArrayList<>();
+    ;
     public static ArrayList<Song> PlaylistSongs = new ArrayList<>();
     public static boolean isPlaying = false;
     public static boolean firstPlay = false;
@@ -46,6 +47,10 @@ public class MusicService extends Service implements
 
     public void onCreate() {
         super.onCreate();
+
+        NotificationManager nm = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        nm.cancelAll();
+
         this.songPosition = 0;
         this.player = new MediaPlayer();
         initMusicPlayer();
@@ -98,37 +103,37 @@ public class MusicService extends Service implements
         return false;
     }
 
-    public void onFirstPlay(){
-        MusicService.firstPlay=true;
+    public void onFirstPlay() {
+        MusicService.firstPlay = true;
         this.setSong(0);
         this.playSong();
 
     }
 
-    public void pauseSong(){
+    public void pauseSong() {
         player.pause();
         this.isPlaying = false;
         customSimpleNotification(this.getApplicationContext());
     }
 
-    public int getPosn(){
+    public int getPosn() {
         return player.getCurrentPosition();
     }
 
-    public void playSongAgain(){
+    public void playSongAgain() {
         player.seekTo(getPosn());
         player.start();
         this.isPlaying = true;
         customSimpleNotification(this.getApplicationContext());
     }
 
-    public void playSongAgain(int position){
+    public void playSongAgain(int position) {
         player.seekTo(position);
         player.start();
     }
 
-    public void nextSong(){
-        if(PlaylistSongs.size() > 0){
+    public void nextSong() {
+        if (PlaylistSongs.size() > 0) {
             CurrentSong.remove(0);
             CurrentSong.add(PlaylistSongs.get(0));
             PlaylistSongs.remove(0);
@@ -141,7 +146,7 @@ public class MusicService extends Service implements
     @Override
     public void onCompletion(MediaPlayer mp) {
         //On supprime la dernière musique que si il y en a encore
-        if(PlaylistSongs.size() > 0){
+        if (PlaylistSongs.size() > 0) {
             CurrentSong.add(PlaylistSongs.get(0));
             CurrentSong.remove(0);
             PlaylistSongs.remove(0);
@@ -168,35 +173,34 @@ public class MusicService extends Service implements
         }
     }
 
-    private BroadcastReceiver onPause =  new BroadcastReceiver() {
+    private BroadcastReceiver onPause = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             pauseSong();
         }
     };
 
-    private BroadcastReceiver onPlay =  new BroadcastReceiver() {
+    private BroadcastReceiver onPlay = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             playSongAgain();
         }
     };
 
-    private BroadcastReceiver onNext =  new BroadcastReceiver() {
+    private BroadcastReceiver onNext = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-                nextSong();
+            nextSong();
         }
     };
 
 
     public static void customSimpleNotification(Context context) {
         RemoteViews simpleView = new RemoteViews(context.getPackageName(), R.layout.custom_notification);
-        if(isPlaying){
+        if (isPlaying) {
             simpleView.setViewVisibility(R.id.btnPause, View.VISIBLE);
             simpleView.setViewVisibility(R.id.btnPlay, View.GONE);
-        }
-        else {
+        } else {
             simpleView.setViewVisibility(R.id.btnPause, View.GONE);
             simpleView.setViewVisibility(R.id.btnPlay, View.VISIBLE);
         }
@@ -214,7 +218,6 @@ public class MusicService extends Service implements
         NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         nm.notify(7, notification);
     }
-
 
 
     private static void setListeners(RemoteViews view, Context context) {
