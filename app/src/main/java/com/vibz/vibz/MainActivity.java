@@ -29,11 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.io.IOException;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 
 
@@ -41,12 +37,11 @@ import java.util.ArrayList;
  * Created by nicolasszewe on 3/11/15.
  */
 
-public class MainActivity extends Activity implements WifiP2pManager.ConnectionInfoListener {
+public class MainActivity extends Activity  {
     public static WifiP2pManager manager;
     public static WifiP2pManager.Channel channel;
     private BroadcastReceiver receiver = null;
     public WifiP2pInfo deviceInfo = new WifiP2pInfo();
-    public Uri uri;
     private boolean isWifiP2pEnabled = false;
     private static final int SERVER_PORT = 1030;
     private ArrayList<InetAddress> clients = new ArrayList<InetAddress>();
@@ -60,8 +55,8 @@ public class MainActivity extends Activity implements WifiP2pManager.ConnectionI
             View v2 = findViewById(R.id.create_playlist);
             View v3 = findViewById(R.id.loadingPanel);
 
-            v.setVisibility(view.VISIBLE);
-            v3.setVisibility(view.GONE);
+            v.setVisibility(View.VISIBLE);
+            v3.setVisibility(View.GONE);
             v.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, 0, 0.55f));
             v2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, 0, 0.30f));
 
@@ -87,7 +82,7 @@ public class MainActivity extends Activity implements WifiP2pManager.ConnectionI
 
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+        //intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
 
@@ -109,9 +104,7 @@ public class MainActivity extends Activity implements WifiP2pManager.ConnectionI
         //intent.setType("image/*");
         //startActivityForResult(intent, 20);
 
-        //Register filter for on connect callback
-        LocalBroadcastManager.getInstance(this).registerReceiver(connect,
-                new IntentFilter("onConnect"));
+
 
         final EditText editText = (EditText) findViewById(R.id.playlist_name);
         editText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
@@ -143,76 +136,27 @@ public class MainActivity extends Activity implements WifiP2pManager.ConnectionI
         });
     }
 
-    @Override
-    public void onConnectionInfoAvailable(final WifiP2pInfo info) {
-        Log.d("clem", "on connection info available");
-        this.deviceInfo = info;
-        // After the group negotiation, we assign the group owner as the file
-        // server. The file server is single threaded, single connection server
-        // socket.
-        if (info.groupFormed && info.isGroupOwner) {
-            new DataTransferAsync(this).execute();
-            Log.d("clem", "We receive the file");
-        } else if (info.groupFormed) {
-            // The other device acts as the client.
-            Log.d("clem", "the group is formed but we're not group owner");
-        }
-    }
-
-
-
-    protected BroadcastReceiver connect = new BroadcastReceiver() {
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            WifiP2pConfig config = new WifiP2pConfig();
-            WifiP2pDevice device = intent.getParcelableExtra("Device");
-            config.deviceAddress = device.deviceAddress;
-            config.wps.setup = WpsInfo.PBC;
-            config.groupOwnerIntent = 0;
-
-            MainActivity.manager.connect(MainActivity.channel, config, new WifiP2pManager.ActionListener() {
-                @Override
-                public void onSuccess() {
-                    Log.d("clem", "Je suis connecté");
-                }
-
-                @Override
-                public void onFailure(int reason) {
-                }
-            });
-        }
-    };
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("clem", "on activity result uri : " + data.getData());
-        //content://com.android.providers.media.documents/document/image%3A279572
-        uri = data.getData();
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        //disconnect();
+    public void onStart() {
+        super.onStart();
         receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
         registerReceiver(receiver, intentFilter);
     }
 
+
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onStop() {
+        super.onStop();
         unregisterReceiver(receiver);
         //disconnect();
     }
 
     public void NamePlaylist(View view) {
-        findViewById(R.id.create_playlist_button).setVisibility(view.GONE);
-        findViewById(R.id.vibz).setVisibility(view.GONE);
-        findViewById(R.id.loadingPanel).setVisibility(view.INVISIBLE);
-        findViewById(R.id.linearLayout1).setVisibility(view.GONE);
-        findViewById(R.id.playlist_name).setVisibility(view.VISIBLE);
-        findViewById(R.id.Image_create).setVisibility(view.VISIBLE);
+        findViewById(R.id.create_playlist_button).setVisibility(View.GONE);
+        findViewById(R.id.vibz).setVisibility(View.GONE);
+        findViewById(R.id.loadingPanel).setVisibility(View.INVISIBLE);
+        findViewById(R.id.linearLayout1).setVisibility(View.GONE);
+        findViewById(R.id.playlist_name).setVisibility(View.VISIBLE);
+        findViewById(R.id.Image_create).setVisibility(View.VISIBLE);
 
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.FILL_PARENT);
         layoutParams.setMargins(50, 50, 50, 50);
@@ -225,7 +169,6 @@ public class MainActivity extends Activity implements WifiP2pManager.ConnectionI
         EditText yourEditText = (EditText) findViewById(R.id.playlist_name);
         yourEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
         yourEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
-
     }
 
     @Override

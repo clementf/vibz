@@ -18,6 +18,6 @@ public class ImageCache {
     }
 
     public static void cacheImage(long id, Bitmap bmp){
-        coverArts.put((Long)id,bmp );
+        coverArts.put(id,bmp );
     }
 }

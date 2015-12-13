@@ -8,12 +8,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.wifi.p2p.WifiP2pGroup;
-import android.net.wifi.p2p.WifiP2pInfo;
+import android.net.Uri;
+import android.net.wifi.WpsInfo;
+import android.net.wifi.p2p.WifiP2pConfig;
+import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,14 +27,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.util.ArrayList;
 
 /**
@@ -45,18 +39,18 @@ public class PlaylistActivity extends AppCompatActivity {
     SwipeListView swipelistview;
     SongAdapter adapter;
     int lastPosition;
+    public Uri uri;
+
     ArrayList<Song> itemSong;
-    public static final String TAG = "wifidirectdemo";
     private WifiP2pManager manager;
     public static WifiP2pManager.Channel channel;
     private boolean isWifiP2pEnabled = false;
     private BroadcastReceiver onCompletionListener = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("The_best", "La musique est finie");
             songAdt.notifyDataSetChanged();
             addFirstSong();
-            seek_bar.setMax((int) musicSrv.CurrentSong.get(0).getDuration());
+            seek_bar.setMax((int) MusicService.CurrentSong.get(0).getDuration());
         }
 
     };
@@ -95,6 +89,30 @@ public class PlaylistActivity extends AppCompatActivity {
         }
     };
 
+    protected BroadcastReceiver connect = new BroadcastReceiver() {
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            Log.d("nico", "REception de l'intent");
+            WifiP2pConfig config = new WifiP2pConfig();
+            WifiP2pDevice device = intent.getParcelableExtra("Device");
+            config.deviceAddress = device.deviceAddress;
+            config.wps.setup = WpsInfo.PBC;
+            config.groupOwnerIntent = 0;
+
+            manager.connect(channel, config, new WifiP2pManager.ActionListener() {
+                @Override
+                public void onSuccess() {
+                    Log.d("clem", "Je suis connecté");
+                }
+
+                @Override
+                public void onFailure(int reason) {
+                }
+            });
+        }
+    };
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,14 +123,28 @@ public class PlaylistActivity extends AppCompatActivity {
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
-        receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
-        registerReceiver(receiver, intentFilter);
-
         swipelistview = (SwipeListView) findViewById(R.id.playlist);
         itemSong = new ArrayList<Song>();
         adapter = new SongAdapter(this, R.layout.song, itemSong, swipelistview);
 
-        //MainActivity.onConnectionInfoAvailable();
+        manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+        channel = manager.initialize(this, getMainLooper(), null);
+
+        //The Manager which is looking for other devices
+        manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+            }
+
+            @Override
+            public void onFailure(int reason) {
+            }
+        });
+
+
+        //Register filter for on connect callback
+        LocalBroadcastManager.getInstance(this).registerReceiver(connect,
+                new IntentFilter("onConnect"));
 
         swipelistview.setSwipeListViewListener(new BaseSwipeListViewListener() {
             @Override
@@ -133,7 +165,6 @@ public class PlaylistActivity extends AppCompatActivity {
 
             @Override
             public void onStartOpen(int position, int action, boolean right) {
-                Log.d("swipe", String.format("onStartOpen %d - action %d", position, action));
                 ListView listView = (ListView) findViewById(R.id.playlist);
                 View v = listView.getChildAt(position -
                         listView.getFirstVisiblePosition());
@@ -154,7 +185,6 @@ public class PlaylistActivity extends AppCompatActivity {
 
             @Override
             public void onStartClose(int position, boolean right) {
-                Log.d("swipe", String.format("onStartClose %d", position));
                 ListView listView = (ListView) findViewById(R.id.playlist);
                 View v = listView.getChildAt(position -
                         listView.getFirstVisiblePosition());
@@ -166,7 +196,6 @@ public class PlaylistActivity extends AppCompatActivity {
 
             @Override
             public void onClickFrontView(int position) {
-                Log.d("swipe", String.format("onClickFrontView %d", position));
                 ListView listView = (ListView) findViewById(R.id.playlist);
                 View v = listView.getChildAt(position -
                         listView.getFirstVisiblePosition());
@@ -188,7 +217,6 @@ public class PlaylistActivity extends AppCompatActivity {
 
             @Override
             public void onClickBackView(int position) {
-                Log.d("swipe", String.format("onClickBackView %d", position));
                 ListView listView = (ListView) findViewById(R.id.playlist);
                 View v = listView.getChildAt(position -
                         listView.getFirstVisiblePosition());
@@ -232,9 +260,14 @@ public class PlaylistActivity extends AppCompatActivity {
         }
     };
 
+
     @Override
     protected void onStart() {
         super.onStart();
+
+        receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
+        registerReceiver(receiver, intentFilter);
+
         LocalBroadcastManager.getInstance(this).registerReceiver(onCompletionListener,
                 new IntentFilter("musicCompletion"));
 
@@ -247,7 +280,7 @@ public class PlaylistActivity extends AppCompatActivity {
         seekUpdation();
 
         TextView t = (TextView) findViewById(R.id.playlistName);
-        t.setText(musicSrv.PlaylistName);
+        t.setText(MusicService.PlaylistName);
 
 
         seek_bar = (SeekBar) findViewById(R.id.musicProgress);
@@ -268,15 +301,15 @@ public class PlaylistActivity extends AppCompatActivity {
                     int songProgress = seekBar.getProgress();
                     musicSrv.playSongAgain(songProgress);
                     song_progress_text.setText(convertPositionString(songProgress));
-                    current_song_text.setText(musicSrv.CurrentSong.get(0).getStringDuration());
+                    current_song_text.setText(MusicService.CurrentSong.get(0).getStringDuration());
                     ImageButton b = (ImageButton) findViewById(R.id.pause_play_song);
                     b.setImageResource(R.drawable.ic_action_pause);
                 }
             }
         });
 
-        if (musicSrv.CurrentSong.size() > 0) {
-            seek_bar.setMax((int) musicSrv.CurrentSong.get(0).getDuration());
+        if (MusicService.CurrentSong.size() > 0) {
+            seek_bar.setMax((int) MusicService.CurrentSong.get(0).getDuration());
         } else {
             seek_bar.setMax(0);
         }
@@ -289,7 +322,7 @@ public class PlaylistActivity extends AppCompatActivity {
         if (MusicService.isPlaying == true) {
             seek_bar.setProgress(musicSrv.getPosn());
             song_progress_text.setText(convertPositionString(musicSrv.getPosn()));
-            current_song_text.setText(musicSrv.CurrentSong.get(0).getStringDuration());
+            current_song_text.setText(MusicService.CurrentSong.get(0).getStringDuration());
         }
         seekHandler.postDelayed(run, 1000);
         displayVibzMessages();
@@ -297,11 +330,11 @@ public class PlaylistActivity extends AppCompatActivity {
 
     public void displayVibzMessages() {
         TextView menuTitle = (TextView) findViewById(R.id.menuTitle);
-        if (musicSrv.CurrentSong.size() == 0) {
+        if (MusicService.CurrentSong.size() == 0) {
             menuTitle.setVisibility(View.VISIBLE);
             menuTitle.setText("Empty playlist ! Add a song to show your Vibz !");
             menuTitle.setTextSize(20);
-        } else if (musicSrv.PlaylistSongs.size() == 0) {
+        } else if (MusicService.PlaylistSongs.size() == 0) {
             menuTitle.setVisibility(View.VISIBLE);
             menuTitle.setText("Come on ! No song left after that one ! Show your Vibz and add a new one !");
             menuTitle.setTextSize(20);
@@ -311,47 +344,55 @@ public class PlaylistActivity extends AppCompatActivity {
         }
     }
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("clem", "on activity result uri : " + data.getData());
+        //content://com.android.providers.media.documents/document/image%3A279572
+        uri = data.getData();
+    }
+
     public void addFirstSong() {
-        if (musicSrv.CurrentSong.size() > 0) {
+        if (MusicService.CurrentSong.size() > 0) {
 //            Set player background to black
 //            findViewById(R.id.fondPlayer).setBackgroundColor(Color.BLACK);
-            String artist = musicSrv.CurrentSong.get(0).getArtist();
+            String artist = MusicService.CurrentSong.get(0).getArtist();
             TextView firstsongView = (TextView) findViewById(R.id.firstsong_title);
             TextView firstartistView = (TextView) findViewById(R.id.firstsong_artist);
 
             ImageView firstcoverart = (ImageView) findViewById(R.id.coverart);
             LinearLayout covfond = (LinearLayout) findViewById(R.id.coverartfond);
-            DownloadImageTask task = new DownloadImageTask(firstcoverart, this, musicSrv.CurrentSong.get(0).getAlbumId());
-            task.execute(musicSrv.CurrentSong.get(0).getBitmapUri());
+            DownloadImageTask task = new DownloadImageTask(firstcoverart, this, MusicService.CurrentSong.get(0).getAlbumId());
+            task.execute(MusicService.CurrentSong.get(0).getBitmapUri());
 
             BlurImageTask taskBlur = new BlurImageTask(covfond, this);
-            taskBlur.execute(musicSrv.CurrentSong.get(0).getBitmapUri());
+            taskBlur.execute(MusicService.CurrentSong.get(0).getBitmapUri());
 
             if (artist.equals("<unknown>")) {
                 firstartistView.setText("");
             } else {
-                firstartistView.setText(musicSrv.CurrentSong.get(0).getArtist());
+                firstartistView.setText(MusicService.CurrentSong.get(0).getArtist());
             }
-            firstsongView.setText(musicSrv.CurrentSong.get(0).getTitle());
+            firstsongView.setText(MusicService.CurrentSong.get(0).getTitle());
         }
     }
 
     public void refreshPlaylist() {
         itemView = (ListView) findViewById(R.id.playlist);
-        this.songAdt = new SongAdapter(this, R.layout.song, MusicService.PlaylistSongs, swipelistview);
+        songAdt = new SongAdapter(this, R.layout.song, MusicService.PlaylistSongs, swipelistview);
         itemView.setAdapter(songAdt);
     }
 
 
     //Player function
     public void onPausePlaySong(View view) {
-        if (musicSrv.isPlaying == true) {
+        if (MusicService.isPlaying == true) {
             musicSrv.pauseSong();
-            musicSrv.isPlaying = false;
+            MusicService.isPlaying = false;
             ImageButton b = (ImageButton) findViewById(R.id.pause_play_song);
             b.setImageResource(R.drawable.ic_action_play);
 
-        } else if (musicSrv.CurrentSong.size() > 0) {
+        } else if (MusicService.CurrentSong.size() > 0) {
             musicSrv.playSongAgain();
             MusicService.isPlaying = true;
             ImageButton b = (ImageButton) findViewById(R.id.pause_play_song);
@@ -403,9 +444,11 @@ public class PlaylistActivity extends AppCompatActivity {
         MusicService.PlaylistName = null;
         PlaylistActivity.songAdt.notifyDataSetChanged();
         Intent intent = new Intent("updateName");
-        Log.d("the_best", "TENTATIVE DE RESET" + WiFiDirectBroadcastReceiver.mydeviceName);
         intent.putExtra("Playlist", WiFiDirectBroadcastReceiver.mydeviceName);
         LocalBroadcastManager.getInstance(PlaylistActivity.this).sendBroadcast(intent);
+        Intent intent2 = new Intent("removeGroup");
+        LocalBroadcastManager.getInstance(PlaylistActivity.this).sendBroadcast(intent2);
+
     }
 
     @Override
@@ -431,6 +474,12 @@ public class PlaylistActivity extends AppCompatActivity {
     protected void onDestroy() {
         resetPlaylist();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(receiver);
     }
 
     public int convertDpToPixel(float dp) {

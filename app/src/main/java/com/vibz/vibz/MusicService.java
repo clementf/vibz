@@ -33,7 +33,7 @@ public class MusicService extends Service implements
     public static MediaPlayer player;
     public static String PlaylistName = "";
     public static boolean premiereDevice;
-    public static ArrayList<Song> CurrentSong = new ArrayList<>();;
+    public static ArrayList<Song> CurrentSong = new ArrayList<>();
     public static ArrayList<Song> PlaylistSongs = new ArrayList<>();
     public static boolean isPlaying = false;
     public static boolean firstPlay = false;
@@ -47,7 +47,7 @@ public class MusicService extends Service implements
     public void onCreate() {
         super.onCreate();
         this.songPosition = 0;
-        this.player = new MediaPlayer();
+        player = new MediaPlayer();
         initMusicPlayer();
 
         LocalBroadcastManager.getInstance(this).registerReceiver(onPause,
@@ -59,15 +59,15 @@ public class MusicService extends Service implements
     }
 
     public void initMusicPlayer() {
-        this.player.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
-        this.player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        this.player.setOnPreparedListener(this);
-        this.player.setOnCompletionListener(this);
-        this.player.setOnErrorListener(this);
+        player.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
+        player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        player.setOnPreparedListener(this);
+        player.setOnCompletionListener(this);
+        player.setOnErrorListener(this);
     }
 
     public void setList(ArrayList<Song> theSongs) {
-        this.CurrentSong = theSongs;
+        CurrentSong = theSongs;
     }
 
     public void playSong() {
@@ -80,7 +80,7 @@ public class MusicService extends Service implements
             android.util.Log.e("MUSIC SERVICE", "Error setting data source", e);
         }
         player.prepareAsync();
-        this.isPlaying = true;
+        isPlaying = true;
         customSimpleNotification(this.getApplicationContext());
     }
 
@@ -109,7 +109,7 @@ public class MusicService extends Service implements
 
     public void pauseSong(){
         player.pause();
-        this.isPlaying = false;
+        isPlaying = false;
         customSimpleNotification(this.getApplicationContext());
     }
 
@@ -120,7 +120,7 @@ public class MusicService extends Service implements
     public void playSongAgain(){
         player.seekTo(getPosn());
         player.start();
-        this.isPlaying = true;
+        isPlaying = true;
         customSimpleNotification(this.getApplicationContext());
     }
 

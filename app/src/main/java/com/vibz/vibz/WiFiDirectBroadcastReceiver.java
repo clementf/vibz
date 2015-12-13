@@ -24,6 +24,7 @@ import android.content.IntentFilter;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
@@ -66,6 +67,35 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         }
     };
 
+
+    private BroadcastReceiver disconnect = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (manager != null && channel != null) {
+                manager.requestGroupInfo(channel, new WifiP2pManager.GroupInfoListener() {
+                    @Override
+                    public void onGroupInfoAvailable(WifiP2pGroup group) {
+                        if (group != null && manager != null && channel != null
+                                && group.isGroupOwner()) {
+                            manager.removeGroup(channel, new WifiP2pManager.ActionListener() {
+
+                                @Override
+                                public void onSuccess() {
+                                    Log.d("nico", "removeGroup onSuccess -");
+                                }
+
+                                @Override
+                                public void onFailure(int reason) {
+                                    Log.d("nico", "removeGroup onFailure -" + reason);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        }
+    };
+
     /**
      * @param manager  WifiP2pManager system service
      * @param channel  Wifi p2p channel
@@ -79,6 +109,8 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         this.activity = activity;
         LocalBroadcastManager.getInstance(this.activity).registerReceiver(setDeviceName,
                 new IntentFilter("updateName"));
+        LocalBroadcastManager.getInstance(this.activity).registerReceiver(disconnect,
+                new IntentFilter("removeGroup"));
     }
 
     @Override
@@ -101,10 +133,13 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                 return;
             }
 
-            NetworkInfo networkInfo = (NetworkInfo) intent
+            NetworkInfo networkInfo = intent
                     .getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
 
+            Log.d("clem","" + networkInfo);
             if (networkInfo.isConnected()) {
+
+                Log.d("clem","We are connected");
 
                 // We are connected with the other device, request connection
                 // info to find group owner IP
@@ -121,6 +156,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                         }
                         else if (info.groupFormed) {
                             // The other device acts as the client.
+                            Log.d("clem","the group is formed");
                             Intent serviceIntent = new Intent(context, DataTransferService.class);
                             serviceIntent.setAction(DataTransferService.ACTION_SEND_FILE);
                             serviceIntent.putExtra(DataTransferService.EXTRAS_FILE_PATH, Uri.parse("content://media/external/audio/media/269089").toString());
@@ -134,7 +170,8 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                 });
             }
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
-                //WTF ?
+                //WTF? C'est pour stocker le nom du device avant qu'on lui change pour la playlist. On se servira de la
+               //variable set lors du reset
                 if( MusicService.premiereDevice!= true ) {
                     WifiP2pDevice device = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
                     mydeviceName = device.deviceName;
@@ -142,7 +179,4 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                 }
         }
     }
-
-
-
 }

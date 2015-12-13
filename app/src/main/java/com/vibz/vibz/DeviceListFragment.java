@@ -21,7 +21,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.logging.Handler;
 
 
 /**
@@ -58,23 +58,6 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
         return device;
     }
 
-    /*private static String getDeviceStatus(int deviceStatus) {
-        switch (deviceStatus) {
-            case WifiP2pDevice.AVAILABLE:
-                return "Available";
-            case WifiP2pDevice.INVITED:
-                return "Invited";
-            case WifiP2pDevice.CONNECTED:
-                return "Connected";
-            case WifiP2pDevice.FAILED:
-                return "Failed";
-            case WifiP2pDevice.UNAVAILABLE:
-                return "Unavailable";
-            default:
-                return "Unknown";
-        }
-    }*/
-
     /**
      * Array adapter for ListFragment that maintains WifiP2pDevice list.
      */
@@ -103,25 +86,29 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
                 Intent intent = new Intent("deviceFound");
                 LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
 
-                TextView top = (TextView) v.findViewById(R.id.device_name);
+                final TextView top = (TextView) v.findViewById(R.id.device_name);
                 if (top != null) {
                     top.setText(device.deviceName);
                     try {
                         String[] tempName = device.deviceName.split("$*:");
-                        Log.d("the_best",tempName[1]);
                         top.setText(tempName[1]);
                         top.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View v) {
-                                Intent intent = new Intent("onConnect");
-                                intent.putExtra("Device", device);
-                                LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
-
                                 //Start new activity page : show playlist
-                                //Intent intentMenu = new Intent(getActivity(), PlaylistActivity.class);
-                                //startActivity(intentMenu);
+                                Intent intentMenu = new Intent(getActivity(), PlaylistActivity.class);
+                                startActivity(intentMenu);
+
+                                top.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Intent intent = new Intent("onConnect");
+                                        intent.putExtra("Device", device);
+                                        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+                                    }
+                                }, 1000); //adding one sec delay
                             }
                         });
-                    }catch(Exception e){};
+                    }catch(Exception e){}
                 }
             }
             return v;
