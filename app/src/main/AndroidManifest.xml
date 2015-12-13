@@ -23,9 +23,9 @@
         android:allowBackup="true"
         android:icon="@mipmap/vibz"
         android:label="Vibz"
+        android:largeHeap="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-        android:titleTextStyle="@color/blue_text"
-        android:largeHeap="true">
+        android:titleTextStyle="@color/blue_text">
 
         <activity
             android:name=".Splash"
@@ -40,20 +40,25 @@
         </activity>
 
         <service android:name=".MusicService" />
-        <service android:enabled="true" android:name=".DataTransferService" />
+        <service
+            android:name=".DataTransferService"
+            android:enabled="true" />
 
 
         <activity
             android:name=".ChooseCategoryActivity"
             android:label=""
+            android:screenOrientation="portrait"
             android:titleTextStyle="@color/blue_text" />
         <activity
             android:name=".ListCategoryActivity"
             android:label=""
+            android:screenOrientation="portrait"
             android:titleTextStyle="@color/blue_text" />
         <activity
             android:name=".SearchActivity"
             android:label=""
+            android:screenOrientation="portrait"
             android:titleTextStyle="@color/blue_text"></activity>
         <activity
             android:name=".MainActivity"
@@ -63,6 +68,7 @@
             android:name=".PlaylistActivity"
             android:label=""
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:titleTextStyle="@color/blue_text">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
