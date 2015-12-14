@@ -29,7 +29,6 @@ public class SongAdapter extends ArrayAdapter {
     private ArrayList<Song> songs = new ArrayList<>();
     private LayoutInflater songInf;
     private Context context;
-    private int showedButton = -1;
     private SwipeListView swipelistview;
     int layoutResID;
 
@@ -81,11 +80,13 @@ public class SongAdapter extends ArrayAdapter {
         holder.coverart = (ImageView) row.findViewById(R.id.coverartlist);
         holder.noteButton = (Button) row.findViewById(R.id.button_vote);
         holder.vide = (RelativeLayout) row.findViewById(R.id.vide);
+        holder.nomDevice = (TextView) row.findViewById(R.id.nom_device);
 
         holder.nbVote.setText("+" + currSong.getNbVote());
         holder.songTitle.setText(currSong.getTitle());
         holder.songArtist.setText(currSong.getArtist());
         holder.songDuration.setText(currSong.getStringDuration());
+        holder.nomDevice.setText(WiFiDirectBroadcastReceiver.mydeviceName);
 
         //Try to get the cover art from cache, or get it from the storage
         Bitmap tmp = ImageCache.tryGetImage(currSong.getAlbumId());
@@ -102,11 +103,13 @@ public class SongAdapter extends ArrayAdapter {
         if (whereWeAre.equals("ChooseCategoryActivity") || whereWeAre.equals("SearchActivity")) {
             holder.vide.setVisibility(View.VISIBLE);
             holder.nbVote.setVisibility(View.GONE);
+            holder.nomDevice.setVisibility(View.GONE);
             holder.remove_addButton.setText("Add");
             holder.remove_addButton.setBackgroundColor(Color.rgb(108, 142, 72));
         } else if (whereWeAre.equals("PlaylistActivity")) {
             holder.vide.setVisibility(View.GONE);
             holder.nbVote.setVisibility(View.VISIBLE);
+            holder.nomDevice.setVisibility(View.VISIBLE);
             holder.remove_addButton.setText("Remove");
             holder.remove_addButton.setBackgroundColor(Color.rgb(170, 0, 0));
         }
@@ -212,6 +215,7 @@ public class SongAdapter extends ArrayAdapter {
         Button remove_addButton;
         Button noteButton;
         RelativeLayout vide;
+        TextView nomDevice;
     }
 }
 

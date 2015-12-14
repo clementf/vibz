@@ -101,6 +101,7 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
                                 top.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
+                                        PlaylistActivity.isConsumer = true;
                                         Intent intent = new Intent("onConnect");
                                         intent.putExtra("Device", device);
                                         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);

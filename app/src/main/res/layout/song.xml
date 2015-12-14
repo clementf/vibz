@@ -122,6 +122,12 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/white_50_opacity"
                 android:textSize="15sp" />
+            <TextView
+                android:id="@+id/nom_device"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white_50_opacity"
+                android:textSize="15sp" />
 
         </LinearLayout>
 

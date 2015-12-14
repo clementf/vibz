@@ -70,7 +70,7 @@ public class DataTransferAsync extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         Uri songUri = Uri.parse("file://" + result);
-        Song ajout = new Song(0,"TEST","TEST",0,0,Uri.parse("file://" + result),0);
+        Song ajout = new Song(0,"TEST","TEST",0,0,Uri.parse("file://" + result),0,WiFiDirectBroadcastReceiver.mydeviceName);
         MusicService.PlaylistSongs.add(ajout);
     }
 

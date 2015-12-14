@@ -276,7 +276,7 @@ public class ChooseCategoryActivity extends AppCompatActivity {
 
                 Uri trackUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, thisId);
 
-                this.listSongs.add(new Song(thisId, thisTitle, thisArtist, albumId, thisDuration, trackUri, 0));
+                this.listSongs.add(new Song(thisId, thisTitle, thisArtist, albumId, thisDuration, trackUri, 0,WiFiDirectBroadcastReceiver.mydeviceName));
             }
             while (musicCursor.moveToNext());
         }

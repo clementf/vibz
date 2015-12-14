@@ -123,6 +123,8 @@ public class MainActivity extends Activity  {
                     findViewById(R.id.create_playlist).setLayoutParams(new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, 0, 0.8f));
                     //deviceInfo.isGroupOwner = true;
 
+                    PlaylistActivity.isAdmin = true;
+
                     Intent intent = new Intent("updateName");
                     intent.putExtra("Playlist", "PlayListName$*:" + MusicService.PlaylistName);
                     LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);

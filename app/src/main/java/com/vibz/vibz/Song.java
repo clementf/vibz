@@ -17,8 +17,9 @@ public class Song {
     private long duration;
     private Bitmap coverart;
     private Uri bitmapUri;
+    private String deviceName;
 
-    public Song(long songID, String songTitle, String songArtist, long albumId, long duration, Uri bitmap, long NbVote) {
+    public Song(long songID, String songTitle, String songArtist, long albumId, long duration, Uri bitmap, long NbVote, String deviceName) {
         this.id = songID;
         this.title = songTitle;
         this.artist = songArtist;
@@ -26,6 +27,7 @@ public class Song {
         this.bitmapUri = bitmap;
         this.albumId = albumId;
         this.nbVote = NbVote;
+        this.deviceName = deviceName;
     }
 
     public long getID() {
