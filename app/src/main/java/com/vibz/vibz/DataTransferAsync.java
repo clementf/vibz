@@ -3,6 +3,7 @@ package com.vibz.vibz;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -41,7 +42,7 @@ public class DataTransferAsync extends AsyncTask<Void, Void, String> {
             Socket client = serverSocket.accept();
             Log.d("clem", "Server: connection done");
             final File f = new File(Environment.getExternalStorageDirectory() + "/"
-                    + context.getPackageName() + "/wifip2pshared-" + System.currentTimeMillis()
+                    + context.getPackageName() + "/vibz-shared-" + System.currentTimeMillis()
                     + ".mp3");
 
             File dirs = new File(f.getParent());
@@ -68,6 +69,7 @@ public class DataTransferAsync extends AsyncTask<Void, Void, String> {
      */
     @Override
     protected void onPostExecute(String result) {
+        Uri songUri = Uri.parse("file://" + result);
         Song ajout = new Song(0,"TEST","TEST",0,0,Uri.parse("file://" + result),0);
         MusicService.PlaylistSongs.add(ajout);
     }
@@ -80,7 +82,7 @@ public class DataTransferAsync extends AsyncTask<Void, Void, String> {
             while ((len = inputStream.read(buf)) != -1) {
                 out.write(buf, 0, len);
             }
-            out.close();
+             out.close();
             inputStream.close();
         } catch (IOException e) {
             Log.d("clem", e.toString());

@@ -148,19 +148,39 @@ public class SongAdapter extends ArrayAdapter {
                 //Get the name of the current activity
                 if (whereWeAre.equals("ChooseCategoryActivity") || whereWeAre.equals("SearchActivity")) {
                     if (MusicService.firstPlay == false) {
-                        MusicService.CurrentSong.add(currSong);
-                        PlaylistActivity.musicSrv.onFirstPlay();
-                        MusicService.firstPlay = true;
-                        MusicService.isPlaying = true;
-                        Intent intent = new Intent("sendFile");
-                        intent.putExtra("musique", currSong.getID());
-                        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
-
-                    } else {
-                        MusicService.PlaylistSongs.add(currSong);
-                        Intent intent = new Intent("sendFile");
-                        intent.putExtra("musique", currSong.getID());
-                        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+                        if(PlaylistActivity.IsConnected == true) {
+                            if(PlaylistActivity.isAdmin==true) {
+                                MusicService.CurrentSong.add(currSong);
+                                PlaylistActivity.musicSrv.onFirstPlay();
+                                MusicService.firstPlay = true;
+                                MusicService.isPlaying = true;
+                            }
+                            Intent intent = new Intent("sendFile");
+                            intent.putExtra("musique", currSong.getID());
+                            intent.putExtra("titre", currSong.getTitle());
+                            intent.putExtra("artiste", currSong.getArtist());
+                            intent.putExtra("duree", currSong.getDuration());
+                            LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+                        }
+                        else {
+                            MusicService.CurrentSong.add(currSong);
+                            PlaylistActivity.musicSrv.onFirstPlay();
+                            MusicService.firstPlay = true;
+                            MusicService.isPlaying = true;
+                        }
+                    }
+                    else {
+                        if(PlaylistActivity.IsConnected == true) {
+                            if(PlaylistActivity.isAdmin==true) {
+                                MusicService.PlaylistSongs.add(currSong);
+                            }
+                            Intent intent = new Intent("sendFile");
+                            intent.putExtra("musique", currSong.getID());
+                            LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+                        }
+                        else {
+                            MusicService.PlaylistSongs.add(currSong);
+                        }
                     }
                     int duration = Toast.LENGTH_SHORT;
                     Toast toast = Toast.makeText(context, currSong.getTitle() + " added to the playlist", duration);

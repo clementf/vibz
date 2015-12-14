@@ -82,6 +82,9 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
                                 @Override
                                 public void onSuccess() {
+                                    PlaylistActivity.IsConnected = false;
+                                    PlaylistActivity.isAdmin = false;
+                                    PlaylistActivity.isConsumer = false;
                                     Log.d("clem", "removeGroup onSuccess -");
                                 }
 
@@ -100,17 +103,12 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     private BroadcastReceiver sendFile = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, Intent intent) {
-            NetworkInfo networkInfo = intent
-                    .getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+            final  long tempMusique = intent.getLongExtra("musique", 0);
+            final String artiste = intent.getStringExtra("artiste");
+            final String titre = intent.getStringExtra("titre");
+            final long duration = intent.getLongExtra("duree", 0);
 
-            Log.d("clem", "" + networkInfo);
-
-            final  long tempMusique = intent.getLongExtra("musique",0);
-            Log.d("Nico","" + tempMusique);
-
-            //if (networkInfo.isConnected()) {
-
-                Log.d("clem", "We are connected");
+            Log.d("clem", "We are connected");
 
                 // We are connected with the other device, request connection
                 // info to find group owner IP
@@ -128,8 +126,13 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                             Log.d("clem", "the group is formed");
                             Intent serviceIntent = new Intent(context, DataTransferService.class);
                             serviceIntent.setAction(DataTransferService.ACTION_SEND_FILE);
+
+
                             Uri musique = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, tempMusique);
                             serviceIntent.putExtra(DataTransferService.EXTRAS_FILE_PATH, musique.toString());
+                            serviceIntent.putExtra("duree",duration);
+                            serviceIntent.putExtra("titre",titre);
+                            serviceIntent.putExtra("artiste",artiste);
                             serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
                                     info.groupOwnerAddress.getHostAddress());
                             serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_PORT, 8988);
@@ -139,7 +142,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                     }
                 });
             }
-       // }
     };
 
     /**
@@ -183,6 +185,21 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             if (manager == null) {
                 return;
             }
+            NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+            if (networkInfo.isConnected()) {
+                PlaylistActivity.IsConnected = true;
+            }
+
+            manager.requestConnectionInfo(channel, new WifiP2pManager.ConnectionInfoListener() {
+               public void onConnectionInfoAvailable(WifiP2pInfo info) {
+                    if (info.groupFormed && info.isGroupOwner) {
+                        PlaylistActivity.isAdmin = true;
+                     }
+                     else if (info.groupFormed) {
+                        PlaylistActivity.isConsumer = true;
+                    }
+               }
+            });
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
                 //WTF? C'est pour stocker le nom du device avant qu'on lui change pour la playlist. On se servira de la
                //variable set lors du reset

@@ -41,6 +41,9 @@ public class PlaylistActivity extends AppCompatActivity {
     SongAdapter adapter;
     int lastPosition;
     public Uri uri;
+    public static boolean IsConnected = false;
+    public static boolean isAdmin = false;
+    public static boolean isConsumer = false;
 
     ArrayList<Song> itemSong;
     private WifiP2pManager manager;

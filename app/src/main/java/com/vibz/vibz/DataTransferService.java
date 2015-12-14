@@ -46,6 +46,9 @@ public class DataTransferService extends IntentService {
             String fileUri = intent.getExtras().getString(EXTRAS_FILE_PATH);
             String host = intent.getExtras().getString(EXTRAS_GROUP_OWNER_ADDRESS);
             Socket socket = new Socket();
+            String artiste = intent.getStringExtra("artiste");
+            String titre = intent.getStringExtra("titre");
+            Long duration = intent.getLongExtra("duree",0);
             int port = intent.getExtras().getInt(EXTRAS_GROUP_OWNER_PORT);
             try {
                 socket.bind(null);
@@ -86,7 +89,6 @@ public class DataTransferService extends IntentService {
         try {
             while ((len = inputStream.read(buf)) != -1) {
                 out.write(buf, 0, len);
-                Log.d("clem","COPIE");
             }
             out.close();
             inputStream.close();
