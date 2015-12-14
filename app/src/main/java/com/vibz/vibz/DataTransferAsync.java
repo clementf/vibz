@@ -68,13 +68,8 @@ public class DataTransferAsync extends AsyncTask<Void, Void, String> {
      */
     @Override
     protected void onPostExecute(String result) {
-        MusicService.player.reset();
-        try {
-            MusicService.player.setDataSource(context, Uri.parse("file://" + result));
-        } catch (Exception e) {
-            android.util.Log.e("MUSIC SERVICE", "Error setting data source", e);
-        }
-        MusicService.player.prepareAsync();
+        Song ajout = new Song(0,"TEST","TEST",0,0,Uri.parse("file://" + result),0);
+        MusicService.PlaylistSongs.add(ajout);
     }
 
     public static boolean copyFile(InputStream inputStream, OutputStream out) {

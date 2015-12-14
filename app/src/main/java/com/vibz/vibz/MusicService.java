@@ -16,6 +16,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.v7.app.NotificationCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -77,7 +78,14 @@ public class MusicService extends Service implements
     public void playSong() {
         player.reset();
         long currentSongID = CurrentSong.get(0).getID();
-        Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, currentSongID);
+        Uri trackUri = CurrentSong.get(0).getBitmapUri();
+        if (currentSongID==0) {
+            trackUri = CurrentSong.get(0).getBitmapUri();
+        }
+        else{
+            trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, currentSongID);
+        }
+        Log.d("NICO","" + trackUri);
         try {
             player.setDataSource(getApplicationContext(), trackUri);
         } catch (Exception e) {
