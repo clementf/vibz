@@ -2,6 +2,7 @@ package com.vibz.vibz;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -151,8 +152,15 @@ public class SongAdapter extends ArrayAdapter {
                         PlaylistActivity.musicSrv.onFirstPlay();
                         MusicService.firstPlay = true;
                         MusicService.isPlaying = true;
+                        Intent intent = new Intent("sendFile");
+                        intent.putExtra("musique", currSong.getID());
+                        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+
                     } else {
                         MusicService.PlaylistSongs.add(currSong);
+                        Intent intent = new Intent("sendFile");
+                        intent.putExtra("musique", currSong.getID());
+                        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
                     }
                     int duration = Toast.LENGTH_SHORT;
                     Toast toast = Toast.makeText(context, currSong.getTitle() + " added to the playlist", duration);

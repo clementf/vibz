@@ -86,6 +86,7 @@ public class DataTransferService extends IntentService {
         try {
             while ((len = inputStream.read(buf)) != -1) {
                 out.write(buf, 0, len);
+                Log.d("clem","COPIE");
             }
             out.close();
             inputStream.close();

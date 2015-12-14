@@ -1,5 +1,6 @@
 package com.vibz.vibz;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -67,11 +68,13 @@ public class DataTransferAsync extends AsyncTask<Void, Void, String> {
      */
     @Override
     protected void onPostExecute(String result) {
-        Log.d("clem", "sent data");
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.parse("file://" + result), "audio/*");
-        context.startActivity(intent);
+        MusicService.player.reset();
+        try {
+            MusicService.player.setDataSource(context, Uri.parse("file://" + result));
+        } catch (Exception e) {
+            android.util.Log.e("MUSIC SERVICE", "Error setting data source", e);
+        }
+        MusicService.player.prepareAsync();
     }
 
     public static boolean copyFile(InputStream inputStream, OutputStream out) {
