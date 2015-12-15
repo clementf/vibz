@@ -150,9 +150,9 @@ public class SongAdapter extends ArrayAdapter {
             public void onClick(View v) {
                 //Get the name of the current activity
                 if (whereWeAre.equals("ChooseCategoryActivity") || whereWeAre.equals("SearchActivity")) {
-                    if (MusicService.firstPlay == false) {
-                        if(PlaylistActivity.IsConnected == true) {
-                            if(PlaylistActivity.isAdmin==true) {
+                    if (!MusicService.firstPlay) {
+                        if(PlaylistActivity.IsConnected) {
+                            if(PlaylistActivity.isAdmin) {
                                 MusicService.CurrentSong.add(currSong);
                                 PlaylistActivity.musicSrv.onFirstPlay();
                                 MusicService.firstPlay = true;
@@ -160,9 +160,6 @@ public class SongAdapter extends ArrayAdapter {
                             }
                             Intent intent = new Intent("sendFile");
                             intent.putExtra("musique", currSong.getID());
-                            intent.putExtra("titre", currSong.getTitle());
-                            intent.putExtra("artiste", currSong.getArtist());
-                            intent.putExtra("duree", currSong.getDuration());
                             LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
                         }
                         else {
@@ -173,8 +170,8 @@ public class SongAdapter extends ArrayAdapter {
                         }
                     }
                     else {
-                        if(PlaylistActivity.IsConnected == true) {
-                            if(PlaylistActivity.isAdmin==true) {
+                        if(PlaylistActivity.IsConnected) {
+                            if(PlaylistActivity.isAdmin) {
                                 MusicService.PlaylistSongs.add(currSong);
                             }
                             Intent intent = new Intent("sendFile");

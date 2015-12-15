@@ -4,6 +4,7 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -70,7 +71,13 @@ public class DataTransferAsync extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         Uri songUri = Uri.parse("file://" + result);
-        Song ajout = new Song(0,"TEST","TEST",0,0,Uri.parse("file://" + result),0,WiFiDirectBroadcastReceiver.mydeviceName);
+        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+        mmr.setDataSource(result);
+        String artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+        String title= mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+        long duration = Long.valueOf(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)).longValue();
+        Song ajout = new Song(0,title,artist,0,duration,Uri.parse("file://" + result), 0, WiFiDirectBroadcastReceiver.mydeviceName);
+
         MusicService.PlaylistSongs.add(ajout);
     }
 

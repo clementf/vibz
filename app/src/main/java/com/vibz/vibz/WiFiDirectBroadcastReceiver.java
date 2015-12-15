@@ -104,9 +104,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(final Context context, Intent intent) {
             final  long tempMusique = intent.getLongExtra("musique", 0);
-            final String artiste = intent.getStringExtra("artiste");
-            final String titre = intent.getStringExtra("titre");
-            final long duration = intent.getLongExtra("duree", 0);
+
 
             Log.d("clem", "We are connected");
 
@@ -130,9 +128,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
                             Uri musique = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, tempMusique);
                             serviceIntent.putExtra(DataTransferService.EXTRAS_FILE_PATH, musique.toString());
-                            serviceIntent.putExtra("duree",duration);
-                            serviceIntent.putExtra("titre",titre);
-                            serviceIntent.putExtra("artiste",artiste);
                             serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
                                     info.groupOwnerAddress.getHostAddress());
                             serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_PORT, 8988);
