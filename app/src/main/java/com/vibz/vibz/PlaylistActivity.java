@@ -30,6 +30,10 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 /**
@@ -44,6 +48,7 @@ public class PlaylistActivity extends AppCompatActivity {
     public static boolean IsConnected = false;
     public static boolean isAdmin = false;
     public static boolean isConsumer = false;
+
 
     ArrayList<Song> itemSong;
     private WifiP2pManager manager;
@@ -117,11 +122,30 @@ public class PlaylistActivity extends AppCompatActivity {
     };
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.menu);
+
+        if (PlaylistActivity.isConsumer == true) {
+            findViewById(R.id.layout_add_song).setVisibility(View.GONE);
+            findViewById(R.id.coverartfond).setVisibility(View.GONE);
+            findViewById(R.id.layoutPlayListName).setVisibility(View.GONE);
+            findViewById(R.id.layoutMenuTitle).setVisibility(View.GONE);
+            findViewById(R.id.add_Button_song).setBackgroundColor(View.VISIBLE);
+            TextView textView = (TextView) findViewById(R.id.joinPlayListName);
+            textView.setText(MusicService.PlaylistName);
+            int duration = Toast.LENGTH_SHORT;
+            Toast toast = Toast.makeText(getApplicationContext(), "You just joined the playlist : " + MusicService.PlaylistName, duration);
+            toast.show();
+        } else if (PlaylistActivity.isAdmin == true) {
+            findViewById(R.id.layout_add_song).setVisibility(View.VISIBLE);
+            findViewById(R.id.coverartfond).setVisibility(View.VISIBLE);
+            findViewById(R.id.layoutPlayListName).setVisibility(View.VISIBLE);
+            findViewById(R.id.layoutMenuTitle).setVisibility(View.VISIBLE);
+            findViewById(R.id.add_Button_song).setBackgroundColor(View.GONE);
+        }
+
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);

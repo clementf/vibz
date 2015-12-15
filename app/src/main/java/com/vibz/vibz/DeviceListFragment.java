@@ -29,9 +29,9 @@ import java.util.logging.Handler;
  * parent activity to handle user interaction events
  */
 
-public class DeviceListFragment extends ListFragment implements PeerListListener{
+public class DeviceListFragment extends ListFragment implements PeerListListener {
 
-   private List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
+    private List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
     View mContentView = null;
     private WifiP2pDevice device;
     private WifiP2pInfo info;
@@ -63,6 +63,7 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
      */
     private class WiFiPeerListAdapter extends ArrayAdapter<WifiP2pDevice> {
         private List<WifiP2pDevice> items;
+
         /**
          * @param context
          * @param textViewResourceId
@@ -90,18 +91,20 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
                 if (top != null) {
                     top.setText(device.deviceName);
                     try {
-                        String[] tempName = device.deviceName.split("$*:");
+                        final String[] tempName = device.deviceName.split("$*:");
                         top.setText(tempName[1]);
+                        Log.d("hugo", "Playlist found : " + top.getText());
                         top.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View v) {
                                 //Start new activity page : show playlist
                                 Intent intentMenu = new Intent(getActivity(), PlaylistActivity.class);
                                 startActivity(intentMenu);
-
+                                PlaylistActivity.isConsumer = true;
+                                PlaylistActivity.isAdmin = false;
+                                MusicService.PlaylistName = (String) top.getText();
                                 top.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        PlaylistActivity.isConsumer = true;
                                         Intent intent = new Intent("onConnect");
                                         intent.putExtra("Device", device);
                                         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
@@ -109,7 +112,8 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
                                 }, 1000); //adding one sec delay
                             }
                         });
-                    }catch(Exception e){}
+                    } catch (Exception e) {
+                    }
                 }
             }
             return v;
@@ -121,18 +125,18 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
         peers.clear();
         List<WifiP2pDevice> listDevice = new ArrayList<>();
         listDevice.addAll(peerList.getDeviceList());
-         for(int i=0; i < listDevice.size();i++) {
+        for (int i = 0; i < listDevice.size(); i++) {
             if (listDevice.get(i).deviceName.contains("PlayListName$*:")) {
                 peers.add(listDevice.get(i));
             }
-         }
+        }
         ((WiFiPeerListAdapter) getListAdapter()).notifyDataSetChanged();
         if (peers.size() == 0) {
             return;
         }
     }
 
-    }
+}
 
 
 
