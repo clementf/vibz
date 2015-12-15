@@ -74,9 +74,14 @@ public class DataTransferAsync extends AsyncTask<Void, Void, String> {
         MediaMetadataRetriever mmr = new MediaMetadataRetriever();
         mmr.setDataSource(result);
         String artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-        String title= mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+        String title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
         long duration = Long.valueOf(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)).longValue();
-        Song ajout = new Song(0,title,artist,0,duration,Uri.parse("file://" + result), 0, WiFiDirectBroadcastReceiver.mydeviceName);
+        if (title == null)
+            title = "Unknown";
+        if (artist == null)
+            artist = "<Unknown>";
+        Log.d("hugo", artist + " - " + title);
+        Song ajout = new Song(0, title, artist, 0, duration, Uri.parse("file://" + result), 0, WiFiDirectBroadcastReceiver.mydeviceName);
 
         MusicService.PlaylistSongs.add(ajout);
     }
@@ -89,7 +94,7 @@ public class DataTransferAsync extends AsyncTask<Void, Void, String> {
             while ((len = inputStream.read(buf)) != -1) {
                 out.write(buf, 0, len);
             }
-             out.close();
+            out.close();
             inputStream.close();
         } catch (IOException e) {
             Log.d("clem", e.toString());
